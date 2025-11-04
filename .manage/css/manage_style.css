@@ -1,0 +1,128 @@
+        .status-dot { height: 10px; width: 10px; background-color: #9CA3AF; border-radius: 50%; display: inline-block; }
+        .status-dot.pending { background-color: #F59E0B; }
+        .status-dot.success { background-color: #10B981; }
+        .status-dot.error { background-color: #EF4444; }
+
+        /* Custom styles for inputs */
+        .form-input {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #D1D5DB;
+            background-color: #FFFFFF;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            border-color: #3B82F6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        .form-input[readonly] {
+            background-color: #F3F4F6;
+            color: #6B7280;
+            cursor: not-allowed;
+        }
+        
+        /* Specific input for file */
+        .file-input-custom {
+            display: block;
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #D1D5DB;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        .file-input-custom::file-selector-button {
+            margin-right: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            border: 0;
+            background-color: #F3F4F6;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .file-input-custom::file-selector-button:hover {
+            background-color: #E5E7EB;
+        }
+
+        /* Styles for the toggle buttons */
+        .toggle-btn {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, color 0.2s;
+            border: 1px solid #D1D5DB;
+        }
+        .toggle-btn.active {
+            background-color: #1F2937; /* Dark gray */
+            color: #FFFFFF;
+            border-color: #1F2937;
+        }
+        .toggle-btn.inactive {
+            background-color: #FFFFFF;
+            color: #4B5563; /* Gray */
+        }
+        .toggle-btn.inactive:hover {
+            background-color: #F9FAFB;
+        }
+        
+        /* Main view tab styles */
+        .main-tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #6B7280;
+            border-bottom: 3px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .main-tab-btn:hover {
+            color: #1F2937;
+        }
+        .main-tab-btn.active {
+            color: #1D4ED8; /* Blue */
+            border-bottom-color: #1D4ED8;
+        }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            /* Ensure modals appear on top */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        /* Editor List Styles */
+        .dc-list-item, .duration-list-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 1rem;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+        }

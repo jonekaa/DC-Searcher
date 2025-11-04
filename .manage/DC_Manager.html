@@ -1,0 +1,1379 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DC Data Manager</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="css/manage_style.css" />
+    </head>
+    <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+        <div class="absolute top-4 left-4 flex gap-x-3">
+            <button
+                id="back-to-home-btn"
+                class="inline-flex items-center bg-white text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back
+            </button>
+            <button
+                id="logout-button"
+                class="hidden inline-flex items-center bg-white text-red-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div id="login-view" class="flex items-center justify-center min-h-screen">
+            <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
+                <header class="text-center mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800">DC Data Manager</h1>
+                    <p class="text-gray-500 mt-1">Please log in to continue</p>
+                </header>
+                <div class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+                        <input id="login-email" type="email" placeholder="admin@example.com" class="form-input" />
+                    </div>
+                    <div>
+                        <label for="login-password" class="block mb-1 text-sm font-medium text-gray-700"
+                            >Password</label
+                        >
+                        <input id="login-password" type="password" class="form-input" />
+                    </div>
+                    <p id="login-error" class="text-red-500 text-sm hidden"></p>
+                    <button
+                        id="login-button"
+                        class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
+                        Login
+                    </button>
+                    <button
+                        id="forgot-password-btn"
+                        class="text-sm text-blue-600 hover:underline text-center w-full mt-2">
+                        Forgot Password?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-content-view" class="hidden">
+            <div class="max-w-2xl w-full bg-white p-8 rounded-xl shadow-lg mt-16">
+                <header class="text-center mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800">DC Data Manager</h1>
+                    <p class="text-gray-500 mt-1">Upload new data or edit existing entries.</p>
+                </header>
+
+                <div class="flex border-b-2 border-gray-200 mb-6">
+                    <button id="view-uploader-btn" class="main-tab-btn active">Upload Data</button>
+                    <button id="view-editor-btn" class="main-tab-btn">Edit Data</button>
+                </div>
+
+                <div id="uploader-view">
+                    <div class="flex space-x-2 bg-gray-100 p-1 rounded-lg mb-6">
+                        <button id="toggle-file-btn" class="toggle-btn active">Upload File</button>
+                        <button id="toggle-manual-btn" class="toggle-btn inactive">Input Manually</button>
+                    </div>
+
+                    <div>
+                        <div id="file-upload-container">
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <div class="mb-4">
+                                    <label for="dc-file-input" class="block mb-2 text-sm font-medium text-gray-700"
+                                        >1. DC File (.csv)</label
+                                    >
+                                    <input
+                                        id="dc-file-input"
+                                        type="file"
+                                        accept=".csv,.txt"
+                                        class="file-input-custom" />
+                                </div>
+
+                                <div class="mb-6">
+                                    <label
+                                        for="durations-file-input"
+                                        class="block mb-2 text-sm font-medium text-gray-700"
+                                        >2. Durations File (.csv)</label
+                                    >
+                                    <input
+                                        id="durations-file-input"
+                                        type="file"
+                                        accept=".csv,.txt"
+                                        class="file-input-custom" />
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4 -mt-2">
+                                    Note: Files should be Comma-Separated (CSV)
+                                </p>
+
+                                <button
+                                    id="file-upload-button"
+                                    class="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                    Upload From Files
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="manual-input-container" class="hidden">
+                            <div id="manual-step-1">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Step 1: Enter DC Details</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="dc-name" class="block mb-1 text-sm font-medium text-gray-700"
+                                            >DC Name</label
+                                        >
+                                        <input
+                                            id="dc-name"
+                                            type="text"
+                                            placeholder="e.g., DC_SURABAYA"
+                                            class="form-input" />
+                                    </div>
+                                    <div>
+                                        <label for="dc-loc" class="block mb-1 text-sm font-medium text-gray-700"
+                                            >Loc ID</label
+                                        >
+                                        <input id="dc-loc" type="text" placeholder="e.g., 1234" class="form-input" />
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="dc-lat" class="block mb-1 text-sm font-medium text-gray-700"
+                                                >Latitude</label
+                                            >
+                                            <input
+                                                id="dc-lat"
+                                                type="number"
+                                                step="any"
+                                                placeholder="e.g., -7.2575"
+                                                class="form-input" />
+                                        </div>
+                                        <div>
+                                            <label for="dc-lon" class="block mb-1 text-sm font-medium text-gray-700"
+                                                >Longitude</label
+                                            >
+                                            <input
+                                                id="dc-lon"
+                                                type="number"
+                                                step="any"
+                                                placeholder="e.g., 112.7521"
+                                                class="form-input" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    id="manual-next-btn"
+                                    class="mt-6 w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
+                                    Next: Add Durations
+                                </button>
+                            </div>
+
+                            <div id="manual-step-2" class="hidden">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-1">Step 2: Add Durations</h3>
+                                <p class="text-sm text-gray-600 mb-4">
+                                    Enter durations *from* <strong id="origin-dc-name" class="text-blue-600"></strong>.
+                                </p>
+
+                                <div
+                                    id="durations-list-container"
+                                    class="space-y-3 max-h-60 overflow-y-auto pr-2"></div>
+
+                                <button
+                                    id="add-duration-btn"
+                                    class="mt-4 w-full bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition border border-gray-300">
+                                    + Add Another Duration
+                                </button>
+
+                                <div class="flex space-x-4 mt-6">
+                                    <button
+                                        id="manual-back-btn"
+                                        class="w-1/3 bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-600 transition">
+                                        Back
+                                    </button>
+                                    <button
+                                        id="manual-upload-button"
+                                        class="w-2/3 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        Upload Manual Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <div id="status-container" class="space-y-3 text-sm">
+                            <p id="status-auth">
+                                <span class="status-dot"></span>
+                                <span class="font-medium"> Authentication:</span> Waiting...
+                            </p>
+                            <p id="status-file">
+                                <span class="status-dot"></span>
+                                <span class="font-medium">Data Status:</span> Pending
+                            </p>
+                            <p id="status-dcs">
+                                <span class="status-dot"></span>
+                                <span class="font-medium">DCs Collection:</span> Pending
+                            </p>
+                            <p id="status-durations">
+                                <span class="status-dot"></span>
+                                <span class="font-medium">Durations Collection:</span> Pending
+                            </p>
+                            <p id="status-final" class="font-bold text-lg text-center pt-4"></p>
+                        </div>
+
+                        <button
+                            id="upload-another-button"
+                            class="hidden w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition">
+                            Upload Another
+                        </button>
+                    </div>
+                </div>
+
+                <div id="editor-view" class="hidden">
+                    <div id="dc-list-view">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold text-gray-800">Manage DCs</h3>
+                            <div class="flex space-x-2 items-center">
+                                <input
+                                    id="dc-search-input"
+                                    type="text"
+                                    placeholder="Search by name or loc"
+                                    class="form-input w-64" />
+                            </div>
+                        </div>
+                        <div id="dc-list-container" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                            <p id="dc-list-loading" class="text-gray-500">Loading DC list...</p>
+                        </div>
+                    </div>
+
+                    <div id="duration-list-view" class="hidden">
+                        <button
+                            id="back-to-dcs-btn"
+                            class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 mb-4">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 mr-1"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Back to DC List
+                        </button>
+                        <h3 id="duration-view-title" class="text-xl font-semibold text-gray-800 mb-4">
+                            Manage Durations
+                        </h3>
+                        <div id="durations-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+                            <p id="duration-list-loading" class="text-gray-500">Loading durations...</p>
+                        </div>
+                        <button
+                            id="add-new-duration-btn"
+                            class="mt-4 w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition border border-green-700">
+                            + Add New Duration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="edit-dc-modal" class="modal-backdrop hidden">
+            <div class="modal-content">
+                <h3 class="text-xl font-semibold mb-4">Edit DC Details</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="modal-dc-name" class="block mb-1 text-sm font-medium text-gray-700"
+                            >DC Name (Read-only)</label
+                        >
+                        <input id="modal-dc-name" type="text" class="form-input" readonly />
+                    </div>
+                    <div>
+                        <label for="modal-dc-loc" class="block mb-1 text-sm font-medium text-gray-700">Loc ID</label>
+                        <input id="modal-dc-loc" type="text" class="form-input" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="modal-dc-lat" class="block mb-1 text-sm font-medium text-gray-700"
+                                >Latitude</label
+                            >
+                            <input id="modal-dc-lat" type="number" step="any" class="form-input" />
+                        </div>
+                        <div>
+                            <label for="modal-dc-lon" class="block mb-1 text-sm font-medium text-gray-700"
+                                >Longitude</label
+                            >
+                            <input id="modal-dc-lon" type="number" step="any" class="form-input" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        id="modal-dc-cancel"
+                        class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button
+                        id="modal-dc-save"
+                        class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-duration-modal" class="modal-backdrop hidden">
+            <div class="modal-content">
+                <h3 id="modal-duration-title" class="text-xl font-semibold mb-4">Edit Duration</h3>
+                <p id="modal-duration-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="modal-duration-dest" class="block mb-1 text-sm font-medium text-gray-700"
+                            >Destination DC</label
+                        >
+                        <select id="modal-duration-dest" class="form-input"></select>
+                    </div>
+                    <div>
+                        <label for="modal-duration-km" class="block mb-1 text-sm font-medium text-gray-700"
+                            >Distance (KM)</label
+                        >
+                        <input id="modal-duration-km" type="number" placeholder="e.g., 120" class="form-input" />
+                    </div>
+                    <div>
+                        <label for="modal-duration-text" class="block mb-1 text-sm font-medium text-gray-700"
+                            >Duration Text</label
+                        >
+                        <input
+                            id="modal-duration-text"
+                            type="text"
+                            placeholder="e.g., 2 hours 15 minutes"
+                            class="form-input" />
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                        id="modal-duration-cancel"
+                        class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button
+                        id="modal-duration-save"
+                        class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="delete-confirm-modal" class="modal-backdrop hidden">
+            <div class="modal-content">
+                <h3 class="text-xl font-semibold mb-2">Are you sure?</h3>
+                <p id="delete-confirm-text" class="text-gray-600 mb-6">
+                    Do you really want to delete this item? This action cannot be undone.
+                </p>
+                <div class="flex justify-end space-x-3">
+                    <button
+                        id="modal-delete-cancel"
+                        class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button
+                        id="modal-delete-confirm"
+                        class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+            import {
+                getAuth,
+                signInWithEmailAndPassword,
+                onAuthStateChanged,
+                signOut,
+                sendPasswordResetEmail,
+                setPersistence,
+                inMemoryPersistence
+            } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+            import {
+                getFirestore,
+                doc,
+                writeBatch,
+                collection,
+                getDocs,
+                setLogLevel,
+                onSnapshot,
+                updateDoc,
+                deleteDoc,
+                getDoc,
+                setDoc
+            } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyDcvUFQtYvwyYGcT4B1Ff4A5s5uXa6u95s",
+                authDomain: "dc-searcher-app.firebaseapp.com",
+                projectId: "dc-searcher-app",
+                storageBucket: "dc-searcher-app.firebasestorage.app",
+                messagingSenderId: "739161146197",
+                appId: "1:739161146197:web:f4f2fed0e724217d2c25dc"
+            };
+
+            let db;
+            let auth; // NEW: Auth service
+            let allDcs = [];
+            let currentEditingDcName = null;
+            let currentDurations = {};
+            let currentDeleteContext = {};
+
+            const viewUploaderBtn = document.getElementById("view-uploader-btn");
+            const viewEditorBtn = document.getElementById("view-editor-btn");
+            const uploaderView = document.getElementById("uploader-view");
+            const editorView = document.getElementById("editor-view");
+            const toggleFileBtn = document.getElementById("toggle-file-btn");
+            const toggleManualBtn = document.getElementById("toggle-manual-btn");
+            const fileUploadContainer = document.getElementById("file-upload-container");
+            const manualInputContainer = document.getElementById("manual-input-container");
+            const dcFileInput = document.getElementById("dc-file-input"); // Renamed
+            const durationsFileInput = document.getElementById("durations-file-input"); // New
+            const fileUploadButton = document.getElementById("file-upload-button");
+            const manualStep1 = document.getElementById("manual-step-1");
+            const dcNameInput = document.getElementById("dc-name");
+            const dcLocInput = document.getElementById("dc-loc");
+            const dcLatInput = document.getElementById("dc-lat");
+            const dcLonInput = document.getElementById("dc-lon");
+            const manualNextBtn = document.getElementById("manual-next-btn");
+            const manualStep2 = document.getElementById("manual-step-2");
+            const originDcName = document.getElementById("origin-dc-name");
+            const durationsListContainer = document.getElementById("durations-list-container");
+            const addDurationBtn = document.getElementById("add-duration-btn");
+            const manualBackBtn = document.getElementById("manual-back-btn");
+            const manualUploadButton = document.getElementById("manual-upload-button");
+            const statusAuth = document.getElementById("status-auth");
+            const statusFile = document.getElementById("status-file");
+            const statusDcs = document.getElementById("status-dcs");
+            const statusDurations = document.getElementById("status-durations");
+            const statusFinal = document.getElementById("status-final");
+            const uploadAnotherButton = document.getElementById("upload-another-button");
+            const dcListView = document.getElementById("dc-list-view");
+            const dcListContainer = document.getElementById("dc-list-container");
+            const dcListLoading = document.getElementById("dc-list-loading");
+            const dcSearchInput = document.getElementById("dc-search-input");
+            const durationListView = document.getElementById("duration-list-view");
+            const backToDcsBtn = document.getElementById("back-to-dcs-btn");
+            const durationViewTitle = document.getElementById("duration-view-title");
+            const durationsList = document.getElementById("durations-list");
+            const durationListLoading = document.getElementById("duration-list-loading");
+            const addNewDurationBtn = document.getElementById("add-new-duration-btn");
+            const editDcModal = document.getElementById("edit-dc-modal");
+            const modalDcName = document.getElementById("modal-dc-name");
+            const modalDcLoc = document.getElementById("modal-dc-loc");
+            const modalDcLat = document.getElementById("modal-dc-lat");
+            const modalDcLon = document.getElementById("modal-dc-lon");
+            const modalDcCancel = document.getElementById("modal-dc-cancel");
+            const modalDcSave = document.getElementById("modal-dc-save");
+            const editDurationModal = document.getElementById("edit-duration-modal");
+            const modalDurationTitle = document.getElementById("modal-duration-title");
+            const modalDurationError = document.getElementById("modal-duration-error"); // NEW
+            const modalDurationDest = document.getElementById("modal-duration-dest");
+            const modalDurationKm = document.getElementById("modal-duration-km");
+            const modalDurationText = document.getElementById("modal-duration-text");
+            const modalDurationCancel = document.getElementById("modal-duration-cancel");
+            const modalDurationSave = document.getElementById("modal-duration-save");
+            const deleteConfirmModal = document.getElementById("delete-confirm-modal");
+            const deleteConfirmText = document.getElementById("delete-confirm-text");
+            const modalDeleteCancel = document.getElementById("modal-delete-cancel");
+            const modalDeleteConfirm = document.getElementById("modal-delete-confirm");
+            const forgotPasswordBtn = document.getElementById("forgot-password-btn");
+
+            (async () => {
+                try {
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    await setPersistence(auth, inMemoryPersistence);
+
+                    updateStatus(statusAuth, "pending", "Connecting...");
+
+                    listenForDcUpdates();
+
+                    const loginView = document.getElementById("login-view");
+                    const mainContentView = document.getElementById("main-content-view");
+                    const loginEmail = document.getElementById("login-email");
+                    const loginPassword = document.getElementById("login-password");
+                    const loginButton = document.getElementById("login-button");
+                    const loginError = document.getElementById("login-error");
+                    const logoutButton = document.getElementById("logout-button");
+                    const backToHomeBtn = document.getElementById("back-to-home-btn");
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            // User is logged in
+                            loginView.classList.add("hidden");
+                            mainContentView.classList.remove("hidden");
+                            logoutButton.classList.remove("hidden");
+                            updateStatus(statusAuth, "success", `Logged in as ${user.email}`);
+                        } else {
+                            // User is logged out
+                            loginView.classList.remove("hidden");
+                            mainContentView.classList.add("hidden");
+                            logoutButton.classList.add("hidden");
+                            updateStatus(statusAuth, "pending", "Waiting for login...");
+                        }
+                    });
+
+                    loginButton.addEventListener("click", async () => {
+                        let email = loginEmail.value;
+                        const password = loginPassword.value;
+
+                        if (email && !email.includes("@")) {
+                            email = email.trim().toLowerCase() + "@dc-searcher.com";
+                        }
+
+                        loginError.classList.add("hidden");
+                        loginButton.disabled = true;
+                        loginButton.textContent = "Logging in...";
+
+                        try {
+                            await signInWithEmailAndPassword(auth, email, password);
+                            loginEmail.value = "";
+                            loginPassword.value = "";
+                        } catch (error) {
+                            console.error("Login failed:", error.code);
+                            if (
+                                error.code === "auth/invalid-credential" ||
+                                error.code === "auth/wrong-password" ||
+                                error.code === "auth/user-not-found"
+                            ) {
+                                loginError.textContent = "Invalid email or password.";
+                            } else {
+                                loginError.textContent = "An error occurred. Please try again.";
+                            }
+                            loginError.classList.remove("hidden");
+                        }
+                        loginButton.disabled = false;
+                        loginButton.textContent = "Login";
+                    });
+
+                    loginPassword.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            loginButton.click();
+                        }
+                    });
+                    loginEmail.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            loginButton.click();
+                        }
+                    });
+
+                    logoutButton.addEventListener("click", async () => {
+                        await signOut(auth);
+                    });
+
+                    backToHomeBtn.addEventListener("click", async () => {
+                        await signOut(auth);
+                        window.location.href = "../DC_Searcher.html";
+                    });
+
+                    forgotPasswordBtn.addEventListener("click", async () => {
+                        const email = document.getElementById("login-email").value;
+                        if (!email) {
+                            document.getElementById("login-error").textContent =
+                                'Please enter your email first, then click "Forgot Password".';
+                            document.getElementById("login-error").classList.remove("hidden");
+                            return;
+                        }
+
+                        document.getElementById("login-error").textContent = "Contact admin for reset password!";
+                        document.getElementById("login-error").classList.remove("hidden");
+                    });
+                } catch (error) {
+                    console.error("Firebase initialization failed:", error);
+                    updateStatus(statusAuth, "error", "Connection failed! Check your config keys.");
+                    fileUploadButton.disabled = true;
+                    manualNextBtn.disabled = true;
+                    manualUploadButton.disabled = true;
+                }
+            })();
+
+            function updateStatus(element, status, message) {
+                const dot = element.querySelector(".status-dot");
+                dot.className = `status-dot ${status}`;
+                element.childNodes[2].textContent = ` ${message}`;
+            }
+
+            function resetUploader() {
+                fileUploadButton.disabled = false;
+                fileUploadButton.textContent = "Upload From File";
+                manualUploadButton.disabled = false;
+                manualUploadButton.textContent = "Upload Manual Data";
+                uploadAnotherButton.classList.add("hidden");
+                dcFileInput.value = null;
+                durationsFileInput.value = null;
+                fileUploadButton.textContent = "Upload From Files";
+                dcNameInput.value = "";
+                dcLocInput.value = "";
+                dcLatInput.value = "";
+                dcLonInput.value = "";
+                durationsListContainer.innerHTML = "";
+                manualStep1.classList.remove("hidden");
+                manualStep2.classList.add("hidden");
+                toggleFileBtn.classList.add("active");
+                toggleFileBtn.classList.remove("inactive");
+                toggleManualBtn.classList.add("inactive");
+                toggleManualBtn.classList.remove("active");
+                fileUploadContainer.classList.remove("hidden");
+                manualInputContainer.classList.add("hidden");
+                updateStatus(statusFile, "", "Pending");
+                updateStatus(statusDcs, "", "Pending");
+                updateStatus(statusDurations, "", "Pending");
+                statusFinal.textContent = "";
+                viewUploaderBtn.click();
+            }
+
+            /**
+             * Utility to split a CSV line, handling quoted fields.
+             * This is designed *specifically* for your format.
+             */
+            function splitCsvLine(line) {
+                const fields = [];
+                let inQuote = false;
+                let field = "";
+
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+
+                    if (char === '"') {
+                        // Toggle quote mode. We skip adding the quote itself.
+                        inQuote = !inQuote;
+                        continue;
+                    }
+
+                    if (char === "," && !inQuote) {
+                        // We are at a delimiter and not in a quote
+                        fields.push(field.trim());
+                        field = "";
+                    } else {
+                        // Add the character to the current field
+                        field += char;
+                    }
+                }
+
+                fields.push(field.trim());
+                return fields;
+            }
+
+            /**
+             * Parses the DC CSV content.
+             * Expected format: loc,name,"lat,lon"
+             */
+            function parseDcCsv(csvContent) {
+                const dcsData = [];
+                const lines = csvContent
+                    .replace(/\r/g, "")
+                    .split("\n")
+                    .filter((line) => line.trim() !== "");
+
+                if (lines.length <= 1) {
+                    throw new Error("DC file is empty or missing headers.");
+                }
+
+                // Start from 1 to skip header
+                for (let i = 1; i < lines.length; i++) {
+                    const parts = splitCsvLine(lines[i]);
+                    if (parts.length < 3) {
+                        console.warn(`Skipping malformed DC line: ${lines[i]}`);
+                        continue;
+                    }
+
+                    const loc = parts[0];
+                    const name = parts[1];
+                    const llSource = parts[2]; // This will be "lat,lon"
+
+                    if (!loc || !name || !llSource) {
+                        console.warn(`Skipping DC line with empty fields: ${lines[i]}`);
+                        continue;
+                    }
+
+                    const [latStr, lonStr] = llSource.split(",");
+                    const lat = parseFloat(latStr);
+                    const lon = parseFloat(lonStr);
+
+                    if (isNaN(lat) || isNaN(lon)) {
+                        console.warn(`Skipping DC line with invalid coordinates: ${lines[i]}`);
+                        continue;
+                    }
+
+                    dcsData.push({ name, loc, lat, lon, id: null });
+                }
+                return dcsData;
+            }
+
+            /**
+             * Parses the Durations CSV content.
+             * Expected format: loc source,"lat,lon",Loc Dest,loc dest,"lat,lon",KM,Duration
+             */
+            function parseDurationsCsv(csvContent) {
+                const durationsData = {};
+                const lines = csvContent
+                    .replace(/\r/g, "")
+                    .split("\n")
+                    .filter((line) => line.trim() !== "");
+
+                if (lines.length <= 1) {
+                    throw new Error("Durations file is empty or missing headers.");
+                }
+
+                // Start from 1 to skip header
+                for (let i = 1; i < lines.length; i++) {
+                    const parts = splitCsvLine(lines[i]);
+                    if (parts.length < 7) {
+                        // Now expect 7 fields
+                        console.warn(`Skipping malformed duration line: ${lines[i]}`);
+                        continue;
+                    }
+
+                    const origin = parts[0];
+                    const dest = parts[3];
+                    const kmRaw = parts[5];
+                    const duration = parts[6];
+
+                    if (!origin || !dest || !kmRaw || !duration) {
+                        console.warn(`Skipping duration line with empty fields: ${lines[i]}`);
+                        continue;
+                    }
+
+                    if (!durationsData[origin]) {
+                        durationsData[origin] = {};
+                    }
+
+                    const km = kmRaw && !kmRaw.toUpperCase().endsWith(" KM") ? `${kmRaw} KM` : kmRaw;
+
+                    durationsData[origin][dest] = { km, duration };
+                }
+                return durationsData;
+            }
+
+            function readFileContent(file) {
+                return new Promise((resolve, reject) => {
+                    if (!file) {
+                        reject(new Error("No file selected."));
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (event) => resolve(event.target.result);
+                    reader.onerror = (error) => reject(error);
+                    reader.readAsText(file);
+                });
+            }
+
+            function parseDurationToSeconds(durationString) {
+                if (!durationString || typeof durationString !== "string") return null;
+                let totalSeconds = 0;
+                const hoursMatch = durationString.match(/(\d+)\s*(h|hour|hours|j|jam)/i);
+                const minutesMatch = durationString.match(/(\d+)\s*(m|min|mins|minutes|menit)/i);
+
+                if (!hoursMatch && !minutesMatch) {
+                    // Try to parse days
+                    const dayMatch = durationString.match(/(\d+)\s*(d|day|days|h|hari)/i);
+                    if (dayMatch) {
+                        totalSeconds += parseInt(dayMatch[1], 10) * 24 * 3600;
+                        return totalSeconds;
+                    }
+                    // Try to parse plain number as minutes
+                    const secondsOnly = parseInt(durationString, 10);
+                    if (!isNaN(secondsOnly) && String(secondsOnly) === durationString.trim()) {
+                        console.warn(`Interpreting plain number "${durationString}" as minutes.`);
+                        return secondsOnly * 60; // Assume plain number is minutes
+                    }
+                    if (totalSeconds === 0) return 0; // Handle "0"
+                    return null; // Invalid format
+                }
+
+                if (hoursMatch && hoursMatch[1]) {
+                    totalSeconds += parseInt(hoursMatch[1], 10) * 3600;
+                }
+                if (minutesMatch && minutesMatch[1]) {
+                    totalSeconds += parseInt(minutesMatch[1], 10) * 60;
+                }
+
+                // Handle day match in combination
+                const dayMatch = durationString.match(/(\d+)\s*(d|day|days|h|hari)/i);
+                if (dayMatch && dayMatch[1]) {
+                    totalSeconds += parseInt(dayMatch[1], 10) * 24 * 3600;
+                }
+
+                return totalSeconds;
+            }
+
+            // --- Main View Toggle Logic ---
+            viewUploaderBtn.addEventListener("click", () => {
+                viewUploaderBtn.classList.add("active");
+                viewEditorBtn.classList.remove("active");
+                uploaderView.classList.remove("hidden");
+                editorView.classList.add("hidden");
+            });
+
+            viewEditorBtn.addEventListener("click", () => {
+                viewUploaderBtn.classList.remove("active");
+                viewEditorBtn.classList.add("active");
+                uploaderView.classList.add("hidden");
+                editorView.classList.remove("hidden");
+                showDcListView();
+            });
+
+            // --- Uploader View Logic (File/Manual) ---
+            toggleFileBtn.addEventListener("click", () => {
+                toggleFileBtn.classList.add("active");
+                toggleFileBtn.classList.remove("inactive");
+                toggleManualBtn.classList.add("inactive");
+                toggleManualBtn.classList.remove("active");
+                fileUploadContainer.classList.remove("hidden");
+                manualInputContainer.classList.add("hidden");
+            });
+
+            toggleManualBtn.addEventListener("click", () => {
+                toggleFileBtn.classList.add("inactive");
+                toggleFileBtn.classList.remove("active");
+                toggleManualBtn.classList.add("active");
+                toggleManualBtn.classList.remove("inactive");
+                fileUploadContainer.classList.add("hidden");
+                manualInputContainer.classList.remove("hidden");
+            });
+
+            // --- Manual Input Form Logic ---
+            manualNextBtn.addEventListener("click", () => {
+                if (!dcNameInput.value || !dcLocInput.value || !dcLatInput.value || !dcLonInput.value) {
+                    statusFinal.textContent = "Please fill in all DC details.";
+                    statusFinal.style.color = "#EF4444";
+                    return;
+                }
+                statusFinal.textContent = "";
+                originDcName.textContent = dcNameInput.value;
+                manualStep1.classList.add("hidden");
+                manualStep2.classList.remove("hidden");
+                if (durationsListContainer.children.length === 0) {
+                    addDurationRow();
+                }
+            });
+
+            manualBackBtn.addEventListener("click", () => {
+                manualStep1.classList.remove("hidden");
+                manualStep2.classList.add("hidden");
+            });
+
+            function addDurationRow() {
+                const div = document.createElement("div");
+                div.className = "duration-entry flex items-center space-x-2 p-2 bg-gray-50 rounded-lg";
+                div.innerHTML = `
+                <input type="text" placeholder="Destination DC" class="form-input dest-name w-1/3">
+                <input type="text" placeholder="KM" class="form-input dest-km w-1/4"> <input type="text" placeholder="Duration (e.g., 2h 15m)" class="form-input dest-duration-text w-1/3">
+                <button type="button" class="remove-duration-btn text-red-500 hover:text-red-700 font-bold p-2 w-auto" title="Remove row">X</button>
+            `;
+                div.querySelector(".remove-duration-btn").addEventListener("click", () => {
+                    div.remove();
+                });
+                durationsListContainer.appendChild(div);
+            }
+
+            addDurationBtn.addEventListener("click", addDurationRow);
+
+            async function processAndUpload(dcsData, durationsData) {
+                fileUploadButton.disabled = true;
+                manualUploadButton.disabled = true;
+                fileUploadButton.textContent = "Uploading...";
+                manualUploadButton.textContent = "Uploading...";
+
+                try {
+                    updateStatus(statusDcs, "pending", "Checking existing data in database...");
+                    const dcsCollectionRef = collection(db, "dcs");
+                    const dcsSnapshot = await getDocs(dcsCollectionRef);
+                    let lastId = 0;
+                    const existingDcNames = new Set();
+                    dcsSnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        existingDcNames.add(data.name);
+                        const docId = Number(data.id);
+                        if (!isNaN(docId) && docId > lastId) {
+                            lastId = docId;
+                        }
+                    });
+                    updateStatus(statusDcs, "pending", `Last ID is ${lastId}. Processing new data...`);
+
+                    const processedDcsData = [];
+                    let newIdCounter = lastId;
+                    dcsData.forEach((dcFromFile) => {
+                        if (typeof dcFromFile.name !== "string" || dcFromFile.name.trim() === "") {
+                            console.warn("Skipping DC with invalid or missing name:", dcFromFile);
+                            return;
+                        }
+                        if (existingDcNames.has(dcFromFile.name)) {
+                            let existingDoc = dcsSnapshot.docs.find((d) => d.data().name === dcFromFile.name);
+                            let existingId = existingDoc ? existingDoc.data().id : null;
+                            processedDcsData.push({ ...dcFromFile, id: dcFromFile.id || existingId || 0 });
+                        } else {
+                            newIdCounter++;
+                            processedDcsData.push({ ...dcFromFile, id: dcFromFile.id || newIdCounter });
+                        }
+                    });
+
+                    updateStatus(statusDcs, "pending", "Uploading new/updated DC documents...");
+                    const dcsBatch = writeBatch(db);
+                    processedDcsData.forEach((dc) => {
+                        const docRef = doc(db, "dcs", dc.name);
+                        dc.lat = Number(dc.lat);
+                        dc.lon = Number(dc.lon);
+                        dcsBatch.set(docRef, dc, { merge: true });
+                    });
+                    await dcsBatch.commit();
+                    updateStatus(statusDcs, "success", `Uploaded/updated ${processedDcsData.length} documents.`);
+
+                    updateStatus(statusDurations, "pending", "Uploading new/updated Durations documents...");
+                    const durationsBatch = writeBatch(db);
+                    Object.keys(durationsData).forEach((originName) => {
+                        if (typeof originName !== "string" || originName.trim() === "") {
+                            console.warn("Skipping duration with invalid origin name:", originName);
+                            return;
+                        }
+                        const docRef = doc(db, "durations", originName);
+                        const docData = {
+                            durations: durationsData[originName]
+                        };
+                        durationsBatch.set(docRef, docData, { merge: true }); // Use merge to avoid overwriting
+                    });
+                    await durationsBatch.commit();
+                    updateStatus(
+                        statusDurations,
+                        "success",
+                        `Uploaded/updated ${Object.keys(durationsData).length} documents.`
+                    );
+
+                    statusFinal.textContent = "🎉 Upload Complete! 🎉";
+                    statusFinal.style.color = "#10B981";
+                    fileUploadButton.textContent = "Done!";
+                    manualUploadButton.textContent = "Done!";
+                    uploadAnotherButton.classList.remove("hidden");
+                } catch (error) {
+                    console.error("Upload failed during write to Firebase:", error);
+                    updateStatus(statusDcs, "error", "Upload failed. Check console.");
+                    updateStatus(statusDurations, "error", "Upload failed. Check console.");
+                    statusFinal.textContent = "Upload Failed. See console for details.";
+                    statusFinal.style.color = "#EF4444";
+                    fileUploadButton.textContent = "Failed";
+                    manualUploadButton.textContent = "Failed";
+                    uploadAnotherButton.classList.remove("hidden");
+                }
+            }
+
+            fileUploadButton.addEventListener("click", async () => {
+                statusFinal.textContent = "";
+                const dcFile = dcFileInput.files[0];
+                const durationsFile = durationsFileInput.files[0];
+
+                if (!dcFile || !durationsFile) {
+                    statusFinal.textContent = "Please select both the DC file and the Durations file.";
+                    statusFinal.style.color = "#EF4444";
+                    return;
+                }
+
+                let dcsData, durationsData;
+
+                try {
+                    updateStatus(statusFile, "pending", "Reading DC file...");
+                    const dcFileContent = await readFileContent(dcFile);
+                    dcsData = parseDcCsv(dcFileContent);
+                    updateStatus(statusFile, "pending", `Read ${dcsData.length} DC entries. Reading Durations file...`);
+
+                    const durationsFileContent = await readFileContent(durationsFile);
+                    durationsData = parseDurationsCsv(durationsFileContent);
+                    const durationCount = Object.keys(durationsData).length;
+                    updateStatus(statusFile, "success", `Read ${durationCount} DC origins. Data is parsed.`);
+
+                    await processAndUpload(dcsData, durationsData);
+                } catch (error) {
+                    console.error("Error reading or parsing file:", error);
+                    const errorMessage = `Error: ${error.message}. Check console.`;
+                    updateStatus(statusFile, "error", errorMessage);
+                    statusFinal.textContent = "Upload Failed. Fix file content.";
+                    statusFinal.style.color = "#EF4444";
+                    fileUploadButton.textContent = "Failed";
+                    fileUploadButton.disabled = true;
+                    uploadAnotherButton.classList.remove("hidden");
+                    return;
+                }
+            });
+
+            manualUploadButton.addEventListener("click", async () => {
+                statusFinal.textContent = "";
+                const dcsData = [
+                    {
+                        name: dcNameInput.value,
+                        loc: dcLocInput.value,
+                        lat: Number(dcLatInput.value),
+                        lon: Number(dcLonInput.value)
+                    }
+                ];
+                const originDCName = dcNameInput.value;
+                const innerDurations = {};
+                const durationsData = {};
+                const durationEntries = durationsListContainer.querySelectorAll(".duration-entry");
+                let isValid = true;
+                let allEntriesEmpty = true;
+                let firstErrorMessage = "";
+
+                durationEntries.forEach((entry) => {
+                    const destName = entry.querySelector(".dest-name").value;
+                    const destKmRaw = entry.querySelector(".dest-km").value;
+                    const destDurationText = entry.querySelector(".dest-duration-text").value;
+
+                    if (destName || destKmRaw || destDurationText) {
+                        allEntriesEmpty = false;
+                        if (!destName || !destKmRaw || !destDurationText) {
+                            isValid = false;
+                            if (!firstErrorMessage)
+                                firstErrorMessage = "Please fill all 3 fields for all duration entries.";
+                        } else {
+                            const seconds = parseDurationToSeconds(destDurationText);
+                            if (seconds === null) {
+                                isValid = false;
+                                if (!firstErrorMessage)
+                                    firstErrorMessage = `Invalid duration format: "${destDurationText}". Use "2h 15m" or "90m".`;
+                            } else {
+                                // Add " KM" if it's not already there
+                                const destKm =
+                                    destKmRaw && !destKmRaw.toUpperCase().endsWith(" KM")
+                                        ? `${destKmRaw} KM`
+                                        : destKmRaw;
+                                innerDurations[destName] = {
+                                    km: destKm,
+                                    duration: destDurationText
+                                };
+                            }
+                        }
+                    }
+                });
+                if (allEntriesEmpty && durationEntries.length > 0) {
+                    statusFinal.textContent = "Please fill in at least one valid duration entry.";
+                    statusFinal.style.color = "#EF4444";
+                    return;
+                }
+                if (!isValid) {
+                    statusFinal.textContent = firstErrorMessage;
+                    statusFinal.style.color = "#EF4444";
+                    return;
+                }
+                durationsData[originDCName] = innerDurations;
+                updateStatus(statusFile, "success", "Manual data formatted successfully.");
+                await processAndUpload(dcsData, durationsData);
+            });
+
+            // 3. "Upload Another" Button
+            uploadAnotherButton.addEventListener("click", resetUploader);
+
+            function listenForDcUpdates() {
+                const dcsCollectionRef = collection(db, "dcs");
+                onSnapshot(
+                    dcsCollectionRef,
+                    (snapshot) => {
+                        allDcs = [];
+                        snapshot.forEach((doc) => {
+                            allDcs.push(doc.data());
+                        });
+                        allDcs.sort((a, b) => a.name.localeCompare(b.name));
+                        renderDcList();
+                    },
+                    (error) => {
+                        console.error("Error listening for DC updates:", error);
+                        dcListContainer.innerHTML = `<p class="text-red-500">Error loading DC list. Check console.</p>`;
+                    }
+                );
+            }
+
+            function renderDcList() {
+                dcListContainer.innerHTML = "";
+                const searchTerm = dcSearchInput.value.toLowerCase();
+                const filteredDcs = allDcs.filter(
+                    (dc) =>
+                        dc.name.toLowerCase().includes(searchTerm) ||
+                        (dc.loc && dc.loc.toLowerCase().includes(searchTerm))
+                );
+                if (filteredDcs.length === 0) {
+                    if (allDcs.length > 0) {
+                        dcListContainer.innerHTML = `<p class="text-gray-500">No DCs match your search.</p>`;
+                    } else {
+                        dcListContainer.innerHTML = `<p class="text-gray-500">No DCs found in the database.</p>`;
+                    }
+                    return;
+                }
+                filteredDcs.forEach((dc) => {
+                    const item = document.createElement("div");
+                    item.className = "dc-list-item";
+                    item.innerHTML = `
+                    <div>
+                        <h4 class="font-semibold text-lg text-blue-700">${dc.name}</h4>
+                        <p class="text-sm text-gray-600">Loc: ${dc.loc}</p>
+                        <p class="text-xs text-gray-500">Lat: ${dc.lat}, Lon: ${dc.lon}</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button data-dcname="${dc.name}" class="manage-durations-btn bg-blue-600 text-white font-medium py-2 px-3 rounded-lg text-sm hover:bg-blue-700">Manage Durations</button>
+                        <button data-dcname="${dc.name}" class="edit-dc-btn bg-gray-200 text-gray-800 font-medium py-2 px-3 rounded-lg text-sm hover:bg-gray-300">Edit</button>
+                        <button data-dcname="${dc.name}" class="delete-dc-btn bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-red-200">Delete</button>
+                    </div>
+                `;
+                    dcListContainer.appendChild(item);
+                });
+                dcListContainer.querySelectorAll(".manage-durations-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => showDurationsView(btn.dataset.dcname));
+                });
+                dcListContainer.querySelectorAll(".edit-dc-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => openDcEditModal(btn.dataset.dcname));
+                });
+                dcListContainer.querySelectorAll(".delete-dc-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => openDeleteModal("dc", btn.dataset.dcname));
+                });
+            }
+
+            async function loadAndRenderDurations(dcName) {
+                durationsList.innerHTML = "";
+                durationListLoading.classList.remove("hidden");
+                const docRef = doc(db, "durations", dcName);
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        currentDurations = data.durations || {};
+                        const destinations = Object.keys(currentDurations);
+                        if (destinations.length === 0) {
+                            durationsList.innerHTML = `<p class="text-gray-500">No durations found for ${dcName}.</p>`;
+                        } else {
+                            destinations.sort().forEach((destName) => {
+                                const durationData = currentDurations[destName];
+                                const item = document.createElement("div");
+                                item.className = "duration-list-item";
+                                item.innerHTML = `
+                                <div>
+                                    <h4 class="font-semibold text-lg">${destName}</h4>
+                                    <p class="text-sm text-gray-600">KM: ${durationData.km} | Duration: ${durationData.duration}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button data-destname="${destName}" class="edit-duration-btn bg-gray-200 text-gray-800 font-medium py-2 px-3 rounded-lg text-sm hover:bg-gray-300">Edit</button>
+                                    <button data-destname="${destName}" class="delete-duration-btn bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-red-200">Delete</button>
+                                </div>
+                            `;
+                                durationsList.appendChild(item);
+                            });
+                            durationsList.querySelectorAll(".edit-duration-btn").forEach((btn) => {
+                                btn.addEventListener("click", () => openDurationModal("edit", btn.dataset.destname));
+                            });
+                            durationsList.querySelectorAll(".delete-duration-btn").forEach((btn) => {
+                                btn.addEventListener("click", () =>
+                                    openDeleteModal("duration", currentEditingDcName, btn.dataset.destname)
+                                );
+                            });
+                        }
+                    } else {
+                        currentDurations = {};
+                        durationsList.innerHTML = `<p class="text-gray-500">No durations document found for ${dcName}.</p>`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching durations:", error);
+                    durationsList.innerHTML = `<p class="text-red-500">Error loading durations. Check console.</p>`;
+                } finally {
+                    durationListLoading.classList.add("hidden");
+                }
+            }
+
+            // --- Editor View Navigation ---
+            function showDcListView() {
+                dcListView.classList.remove("hidden");
+                durationListView.classList.add("hidden");
+                currentEditingDcName = null;
+                currentDurations = {};
+            }
+            function showDurationsView(dcName) {
+                dcListView.classList.add("hidden");
+                durationListView.classList.remove("hidden");
+                durationViewTitle.textContent = `Manage Durations for ${dcName}`;
+                currentEditingDcName = dcName;
+                loadAndRenderDurations(dcName);
+            }
+            backToDcsBtn.addEventListener("click", showDcListView);
+            dcSearchInput.addEventListener("input", renderDcList);
+
+            // --- DC Edit Modal Logic ---
+            function openDcEditModal(dcName) {
+                const dc = allDcs.find((d) => d.name === dcName);
+                if (!dc) return;
+                modalDcName.value = dc.name;
+                modalDcLoc.value = dc.loc;
+                modalDcLat.value = dc.lat;
+                modalDcLon.value = dc.lon;
+                editDcModal.classList.remove("hidden");
+            }
+            modalDcCancel.addEventListener("click", () => {
+                editDcModal.classList.add("hidden");
+            });
+
+            modalDcSave.addEventListener("click", async () => {
+                const dcName = modalDcName.value;
+                const docRef = doc(db, "dcs", dcName);
+                try {
+                    await updateDoc(docRef, {
+                        loc: modalDcLoc.value,
+                        lat: Number(modalDcLat.value),
+                        lon: Number(modalDcLon.value)
+                    });
+                    editDcModal.classList.add("hidden");
+                } catch (error) {
+                    console.error("Error updating DC:", error);
+                    // Use a custom modal for errors, not alert()
+                    statusFinal.textContent = "Failed to update DC. Check console.";
+                    statusFinal.style.color = "#EF4444";
+                }
+            });
+
+            // --- Duration Add/Edit Modal Logic ---
+            function openDurationModal(mode, destName = null) {
+                modalDurationError.classList.add("hidden");
+
+                modalDurationDest.innerHTML = '<option value="">-- Select a Destination --</option>';
+                allDcs.forEach((dc) => {
+                    if (dc.name !== currentEditingDcName) {
+                        modalDurationDest.innerHTML += `<option value="${dc.name}">${dc.name}</option>`;
+                    }
+                });
+                if (mode === "edit") {
+                    const data = currentDurations[destName];
+                    if (!data) return;
+                    modalDurationTitle.textContent = `Edit Duration to ${destName}`;
+                    modalDurationDest.value = destName;
+                    modalDurationDest.readOnly = true;
+                    modalDurationDest.classList.add("form-input[readonly]");
+                    modalDurationKm.value = String(data.km).replace(" KM", "");
+                    modalDurationText.value = data.duration;
+                    modalDurationSave.dataset.mode = "edit";
+                    modalDurationSave.dataset.origName = destName;
+                } else {
+                    modalDurationTitle.textContent = `Add New Duration from ${currentEditingDcName}`;
+                    modalDurationDest.value = "";
+                    modalDurationDest.readOnly = false;
+                    modalDurationDest.classList.remove("form-input[readonly]");
+                    modalDurationKm.value = "";
+                    modalDurationText.value = "";
+                    modalDurationSave.dataset.mode = "add";
+                    modalDurationSave.dataset.origName = "";
+                }
+                editDurationModal.classList.remove("hidden");
+            }
+            modalDurationCancel.addEventListener("click", () => {
+                editDurationModal.classList.add("hidden");
+            });
+            addNewDurationBtn.addEventListener("click", () => openDurationModal("add"));
+
+            modalDurationSave.addEventListener("click", async () => {
+                const mode = modalDurationSave.dataset.mode;
+                const newDestName = modalDurationDest.value;
+                const origName = modalDurationSave.dataset.origName;
+                const kmRaw = modalDurationKm.value;
+
+                let errorMsg = "";
+                if (!newDestName || !kmRaw || !modalDurationText.value) {
+                    errorMsg = "Please fill in all fields.";
+                } else if (parseDurationToSeconds(modalDurationText.value) === null) {
+                    errorMsg = `Invalid duration format: "${modalDurationText.value}". Use "2h 15m" or "90m".`;
+                } else if (mode === "add" && currentDurations.hasOwnProperty(newDestName)) {
+                    errorMsg = `A duration for "${newDestName}" already exists.`;
+                }
+
+                if (errorMsg) {
+                    // Show error in the modal
+                    modalDurationError.textContent = errorMsg;
+                    modalDurationError.classList.remove("hidden");
+                    return; // Stop execution
+                }
+
+                if (mode === "edit" && origName !== newDestName) {
+                    delete currentDurations[origName];
+                }
+
+                // Add " KM" if it's not already there
+                const kmValue = kmRaw && !String(kmRaw).toUpperCase().endsWith(" KM") ? `${kmRaw} KM` : kmRaw;
+
+                currentDurations[newDestName] = {
+                    km: kmValue,
+                    duration: modalDurationText.value
+                };
+
+                const docRef = doc(db, "durations", currentEditingDcName);
+                try {
+                    await setDoc(docRef, { durations: currentDurations });
+                    editDurationModal.classList.add("hidden");
+                    loadAndRenderDurations(currentEditingDcName);
+                } catch (error) {
+                    console.error("Error saving duration:", error);
+                    modalDurationError.textContent = "Failed to save. Check console.";
+                    modalDurationError.classList.remove("hidden");
+                }
+            });
+
+            // --- Delete Confirmation Modal Logic ---
+            function openDeleteModal(type, name1, name2 = null) {
+                currentDeleteContext = { type, name1, name2 };
+                if (type === "dc") {
+                    deleteConfirmText.textContent = `Do you really want to delete "${name1}"? This will also delete its entire duration list. This action cannot be undone.`;
+                } else {
+                    deleteConfirmText.textContent = `Do you really want to delete the duration from "${name1}" to "${name2}"? This action cannot be undone.`;
+                }
+                deleteConfirmModal.classList.remove("hidden");
+            }
+            modalDeleteCancel.addEventListener("click", () => {
+                deleteConfirmModal.classList.add("hidden");
+                currentDeleteContext = {};
+            });
+
+            modalDeleteConfirm.addEventListener("click", async () => {
+                const { type, name1, name2 } = currentDeleteContext;
+                try {
+                    if (type === "dc") {
+                        await deleteDoc(doc(db, "dcs", name1));
+                        await deleteDoc(doc(db, "durations", name1));
+                    } else if (type === "duration") {
+                        delete currentDurations[name2];
+                        const docRef = doc(db, "durations", name1);
+                        await setDoc(docRef, { durations: currentDurations });
+                        loadAndRenderDurations(name1);
+                    }
+                } catch (error) {
+                    console.error("Error deleting item:", error);
+                    statusFinal.textContent = "Failed to delete. Check console.";
+                    statusFinal.style.color = "#EF4444";
+                } finally {
+                    deleteConfirmModal.classList.add("hidden");
+                    currentDeleteContext = {};
+                }
+            });
+        </script>
+    </body>
+</html>
