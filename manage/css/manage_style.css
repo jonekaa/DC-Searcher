@@ -23,7 +23,7 @@
             color: #6B7280;
             cursor: not-allowed;
         }
-        
+
         /* Specific input for file */
         .file-input-custom {
             display: block;
@@ -72,7 +72,7 @@
         .toggle-btn.inactive:hover {
             background-color: #F9FAFB;
         }
-        
+
         /* Main view tab styles */
         .main-tab-btn {
             flex: 1;
@@ -115,7 +115,7 @@
             width: 90%;
             max-width: 500px;
         }
-        
+
         /* Editor List Styles */
         .dc-list-item, .duration-list-item {
             display: grid;
