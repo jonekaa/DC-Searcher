@@ -1,4 +1,4 @@
-// js/ui.js (V4.1 - With DOM/Map Filtering)
+// js/ui.js (V4.2 - With Pallet Info)
 
 const comparisonColors = ["#3388ff", "#800080", "#008000", "#ff8c00", "#e30022", "#00ced1"]; // Blue, Purple, Green, Orange, Red, DarkTurquoise
 const getComparisonColor = (factoryId) => {
@@ -94,7 +94,16 @@ const updateMapMarkers = (factories, searchLocation, comparisonList) => {
             })
         }).addTo(markersLayer);
 
-        marker.bindPopup(`<b>${factory.name}</b><br>${factory.roadKm} (${factory.duration})`);
+        // START: UPDATED POPUP CONTENT
+        const popupContent = `
+            <b>${factory.name}</b><br>
+            ${factory.roadKm} (${factory.duration})
+            <hr style="margin: 4px 0;">
+            <small>Food: ${factory.fpallet || 0} / ${factory.fpalletcap || 0}</small><br>
+            <small>Non-Food: ${factory.nfpallet || 0} / ${factory.nfpalletcap || 0}</small>
+        `;
+        marker.bindPopup(popupContent);
+        // END: UPDATED POPUP CONTENT
 
         if (isChecked) {
             marker.openPopup();
@@ -158,12 +167,17 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing) => 
     const clickableAreaClasses = ["flex-grow", "flex", "justify-between", "items-start", "cursor-pointer"];
     const checkboxStyle = routeColor ? `style="accent-color: ${routeColor};"` : "";
 
+    // START: UPDATED CARD HTML
     card.innerHTML = `
         <input type="checkbox" data-id="${factory.id}" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mr-2 flex-shrink-0" ${isChecked} ${checkboxStyle}>
         <div class="${clickableAreaClasses.join(" ")}">
             <div>
                 <p class="text-base font-semibold text-gray-900 pointer-events-none">${factory.name}</p>
                 <p class="text-sm text-gray-500 pointer-events-none">${factory.loc}</p>
+                <div class="text-xs text-gray-500 mt-1 pointer-events-none">
+                    Food: <span class="font-medium">${factory.fpallet || 0}</span> / ${factory.fpalletcap || 0}  
+                    <br>Non-Food: <span class="font-medium">${factory.nfpallet || 0}</span> / ${factory.nfpalletcap || 0}
+                </div>
             </div>
             <div class="text-right flex-shrink-0 ml-4 pointer-events-none">
                 ${distanceHtml}
@@ -175,6 +189,7 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing) => 
         	</svg>
     	 </button>
     `;
+    // END: UPDATED CARD HTML
 
     const clickableArea = card;
     card.addEventListener("mouseover", () => {

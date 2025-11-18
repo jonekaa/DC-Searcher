@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,38 +8,23 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="css/manage_style.css" />
     </head>
+
     <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
         <div class="absolute top-4 left-4 flex gap-x-3">
-            <button
-                id="back-to-home-btn"
+            <button id="back-to-home-btn"
                 class="inline-flex items-center bg-white text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back
             </button>
-            <button
-                id="logout-button"
+            <button id="logout-button"
                 class="hidden inline-flex items-center bg-white text-red-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
                 Logout
@@ -57,19 +43,16 @@
                         <input id="login-email" type="email" placeholder="admin@example.com" class="form-input" />
                     </div>
                     <div>
-                        <label for="login-password" class="block mb-1 text-sm font-medium text-gray-700"
-                            >Password</label
-                        >
+                        <label for="login-password"
+                            class="block mb-1 text-sm font-medium text-gray-700">Password</label>
                         <input id="login-password" type="password" class="form-input" />
                     </div>
                     <p id="login-error" class="text-red-500 text-sm hidden"></p>
-                    <button
-                        id="login-button"
+                    <button id="login-button"
                         class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
                         Login
                     </button>
-                    <button
-                        id="forgot-password-btn"
+                    <button id="forgot-password-btn"
                         class="text-sm text-blue-600 hover:underline text-center w-full mt-2">
                         Forgot Password?
                     </button>
@@ -99,34 +82,24 @@
                         <div id="file-upload-container">
                             <div class="bg-gray-50 p-6 rounded-lg">
                                 <div class="mb-4">
-                                    <label for="dc-file-input" class="block mb-2 text-sm font-medium text-gray-700"
-                                        >1. DC File (.csv)</label
-                                    >
-                                    <input
-                                        id="dc-file-input"
-                                        type="file"
-                                        accept=".csv,.txt"
+                                    <label for="dc-file-input" class="block mb-2 text-sm font-medium text-gray-700">1.
+                                        DC File (.csv)</label>
+                                    <input id="dc-file-input" type="file" accept=".csv,.txt"
                                         class="file-input-custom" />
                                 </div>
 
                                 <div class="mb-6">
-                                    <label
-                                        for="durations-file-input"
-                                        class="block mb-2 text-sm font-medium text-gray-700"
-                                        >2. Durations File (.csv)</label
-                                    >
-                                    <input
-                                        id="durations-file-input"
-                                        type="file"
-                                        accept=".csv,.txt"
+                                    <label for="durations-file-input"
+                                        class="block mb-2 text-sm font-medium text-gray-700">2. Durations File
+                                        (.csv)</label>
+                                    <input id="durations-file-input" type="file" accept=".csv,.txt"
                                         class="file-input-custom" />
                                 </div>
                                 <p class="text-xs text-gray-500 mb-4 -mt-2">
                                     Note: Files should be Comma-Separated (CSV)
                                 </p>
 
-                                <button
-                                    id="file-upload-button"
+                                <button id="file-upload-button"
                                     class="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                     Upload From Files
                                 </button>
@@ -138,48 +111,63 @@
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Step 1: Enter DC Details</h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="dc-name" class="block mb-1 text-sm font-medium text-gray-700"
-                                            >DC Name</label
-                                        >
-                                        <input
-                                            id="dc-name"
-                                            type="text"
-                                            placeholder="e.g., DC_SURABAYA"
+                                        <label for="dc-name" class="block mb-1 text-sm font-medium text-gray-700">DC
+                                            Name</label>
+                                        <input id="dc-name" type="text" placeholder="e.g., DC_SURABAYA"
                                             class="form-input" />
                                     </div>
                                     <div>
-                                        <label for="dc-loc" class="block mb-1 text-sm font-medium text-gray-700"
-                                            >Loc ID</label
-                                        >
+                                        <label for="dc-loc" class="block mb-1 text-sm font-medium text-gray-700">Loc
+                                            ID</label>
                                         <input id="dc-loc" type="text" placeholder="e.g., 1234" class="form-input" />
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="dc-lat" class="block mb-1 text-sm font-medium text-gray-700"
-                                                >Latitude</label
-                                            >
-                                            <input
-                                                id="dc-lat"
-                                                type="number"
-                                                step="any"
-                                                placeholder="e.g., -7.2575"
+                                            <label for="dc-lat"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Latitude</label>
+                                            <input id="dc-lat" type="number" step="any" placeholder="e.g., -7.2575"
                                                 class="form-input" />
                                         </div>
                                         <div>
-                                            <label for="dc-lon" class="block mb-1 text-sm font-medium text-gray-700"
-                                                >Longitude</label
-                                            >
-                                            <input
-                                                id="dc-lon"
-                                                type="number"
-                                                step="any"
-                                                placeholder="e.g., 112.7521"
+                                            <label for="dc-lon"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Longitude</label>
+                                            <input id="dc-lon" type="number" step="any" placeholder="e.g., 112.7521"
+                                                class="form-input" />
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="dc-fpallet"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet</label>
+                                            <input id="dc-fpallet" type="number" placeholder="e.g., 100"
+                                                class="form-input" />
+                                        </div>
+                                        <div>
+                                            <label for="dc-fpalletcap"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet
+                                                Capacity</label>
+                                            <input id="dc-fpalletcap" type="number" placeholder="e.g., 200"
+                                                class="form-input" />
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="dc-nfpallet"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food
+                                                Pallet</label>
+                                            <input id="dc-nfpallet" type="number" placeholder="e.g., 50"
+                                                class="form-input" />
+                                        </div>
+                                        <div>
+                                            <label for="dc-nfpalletcap"
+                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet
+                                                Capacity</label>
+                                            <input id="dc-nfpalletcap" type="number" placeholder="e.g., 100"
                                                 class="form-input" />
                                         </div>
                                     </div>
                                 </div>
-                                <button
-                                    id="manual-next-btn"
+                                <button id="manual-next-btn"
                                     class="mt-6 w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
                                     Next: Add Durations
                                 </button>
@@ -191,24 +179,20 @@
                                     Enter durations *from* <strong id="origin-dc-name" class="text-blue-600"></strong>.
                                 </p>
 
-                                <div
-                                    id="durations-list-container"
-                                    class="space-y-3 max-h-60 overflow-y-auto pr-2"></div>
+                                <div id="durations-list-container" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                                </div>
 
-                                <button
-                                    id="add-duration-btn"
+                                <button id="add-duration-btn"
                                     class="mt-4 w-full bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition border border-gray-300">
                                     + Add Another Duration
                                 </button>
 
                                 <div class="flex space-x-4 mt-6">
-                                    <button
-                                        id="manual-back-btn"
+                                    <button id="manual-back-btn"
                                         class="w-1/3 bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-600 transition">
                                         Back
                                     </button>
-                                    <button
-                                        id="manual-upload-button"
+                                    <button id="manual-upload-button"
                                         class="w-2/3 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                         Upload Manual Data
                                     </button>
@@ -238,8 +222,7 @@
                             <p id="status-final" class="font-bold text-lg text-center pt-4"></p>
                         </div>
 
-                        <button
-                            id="upload-another-button"
+                        <button id="upload-another-button"
                             class="hidden w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition">
                             Upload Another
                         </button>
@@ -251,10 +234,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xl font-semibold text-gray-800">Manage DCs</h3>
                             <div class="flex space-x-2 items-center">
-                                <input
-                                    id="dc-search-input"
-                                    type="text"
-                                    placeholder="Search by name or loc"
+                                <input id="dc-search-input" type="text" placeholder="Search by name or loc"
                                     class="form-input w-64" />
                             </div>
                         </div>
@@ -264,19 +244,11 @@
                     </div>
 
                     <div id="duration-list-view" class="hidden">
-                        <button
-                            id="back-to-dcs-btn"
+                        <button id="back-to-dcs-btn"
                             class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 mb-4">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4 mr-1"
-                                fill="none"
-                                viewBox="0 0 24 24"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 19l-7-7 7-7" />
                             </svg>
                             Back to DC List
@@ -287,8 +259,7 @@
                         <div id="durations-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
                             <p id="duration-list-loading" class="text-gray-500">Loading durations...</p>
                         </div>
-                        <button
-                            id="add-new-duration-btn"
+                        <button id="add-new-duration-btn"
                             class="mt-4 w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition border border-green-700">
                             + Add New Duration
                         </button>
@@ -296,14 +267,14 @@
                 </div>
             </div>
         </div>
+
         <div id="edit-dc-modal" class="modal-backdrop hidden">
             <div class="modal-content">
                 <h3 class="text-xl font-semibold mb-4">Edit DC Details</h3>
                 <div class="space-y-4">
                     <div>
-                        <label for="modal-dc-name" class="block mb-1 text-sm font-medium text-gray-700"
-                            >DC Name (Read-only)</label
-                        >
+                        <label for="modal-dc-name" class="block mb-1 text-sm font-medium text-gray-700">DC Name
+                            (Read-only)</label>
                         <input id="modal-dc-name" type="text" class="form-input" readonly />
                     </div>
                     <div>
@@ -312,70 +283,81 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="modal-dc-lat" class="block mb-1 text-sm font-medium text-gray-700"
-                                >Latitude</label
-                            >
+                            <label for="modal-dc-lat"
+                                class="block mb-1 text-sm font-medium text-gray-700">Latitude</label>
                             <input id="modal-dc-lat" type="number" step="any" class="form-input" />
                         </div>
                         <div>
-                            <label for="modal-dc-lon" class="block mb-1 text-sm font-medium text-gray-700"
-                                >Longitude</label
-                            >
+                            <label for="modal-dc-lon"
+                                class="block mb-1 text-sm font-medium text-gray-700">Longitude</label>
                             <input id="modal-dc-lon" type="number" step="any" class="form-input" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="modal-dc-fpallet" class="block mb-1 text-sm font-medium text-gray-700">Food
+                                Pallet</label>
+                            <input id="modal-dc-fpallet" type="number" class="form-input" />
+                        </div>
+                        <div>
+                            <label for="modal-dc-fpalletcap" class="block mb-1 text-sm font-medium text-gray-700">Food
+                                Pallet Capacity</label>
+                            <input id="modal-dc-fpalletcap" type="number" class="form-input" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="modal-dc-nfpallet" class="block mb-1 text-sm font-medium text-gray-700">Non-Food
+                                Pallet</label>
+                            <input id="modal-dc-nfpallet" type="number" class="form-input" />
+                        </div>
+                        <div>
+                            <label for="modal-dc-nfpalletcap"
+                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet Capacity</label>
+                            <input id="modal-dc-nfpalletcap" type="number" class="form-input" />
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button
-                        id="modal-dc-cancel"
+                    <button id="modal-dc-cancel"
                         class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
                         Cancel
                     </button>
-                    <button
-                        id="modal-dc-save"
+                    <button id="modal-dc-save"
                         class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">
                         Save
                     </button>
                 </div>
             </div>
         </div>
-
         <div id="edit-duration-modal" class="modal-backdrop hidden">
             <div class="modal-content">
                 <h3 id="modal-duration-title" class="text-xl font-semibold mb-4">Edit Duration</h3>
                 <p id="modal-duration-error" class="text-red-500 text-sm mb-4 hidden"></p>
                 <div class="space-y-4">
                     <div>
-                        <label for="modal-duration-dest" class="block mb-1 text-sm font-medium text-gray-700"
-                            >Destination DC</label
-                        >
+                        <label for="modal-duration-dest"
+                            class="block mb-1 text-sm font-medium text-gray-700">Destination DC</label>
                         <select id="modal-duration-dest" class="form-input"></select>
                     </div>
                     <div>
-                        <label for="modal-duration-km" class="block mb-1 text-sm font-medium text-gray-700"
-                            >Distance (KM)</label
-                        >
+                        <label for="modal-duration-km" class="block mb-1 text-sm font-medium text-gray-700">Distance
+                            (KM)</label>
                         <input id="modal-duration-km" type="number" placeholder="e.g., 120" class="form-input" />
                     </div>
                     <div>
-                        <label for="modal-duration-text" class="block mb-1 text-sm font-medium text-gray-700"
-                            >Duration Text</label
-                        >
-                        <input
-                            id="modal-duration-text"
-                            type="text"
-                            placeholder="e.g., 2 hours 15 minutes"
+                        <label for="modal-duration-text" class="block mb-1 text-sm font-medium text-gray-700">Duration
+                            Text</label>
+                        <input id="modal-duration-text" type="text" placeholder="e.g., 2 hours 15 minutes"
                             class="form-input" />
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button
-                        id="modal-duration-cancel"
+                    <button id="modal-duration-cancel"
                         class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
                         Cancel
                     </button>
-                    <button
-                        id="modal-duration-save"
+                    <button id="modal-duration-save"
                         class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700">
                         Save
                     </button>
@@ -390,13 +372,11 @@
                     Do you really want to delete this item? This action cannot be undone.
                 </p>
                 <div class="flex justify-end space-x-3">
-                    <button
-                        id="modal-delete-cancel"
+                    <button id="modal-delete-cancel"
                         class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
                         Cancel
                     </button>
-                    <button
-                        id="modal-delete-confirm"
+                    <button id="modal-delete-confirm"
                         class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700">
                         Delete
                     </button>
@@ -463,6 +443,12 @@
             const dcLocInput = document.getElementById("dc-loc");
             const dcLatInput = document.getElementById("dc-lat");
             const dcLonInput = document.getElementById("dc-lon");
+            // START: NEW Manual Input IDs
+            const dcFpalletInput = document.getElementById("dc-fpallet");
+            const dcFpalletcapInput = document.getElementById("dc-fpalletcap");
+            const dcNfpalletInput = document.getElementById("dc-nfpallet");
+            const dcNfpalletcapInput = document.getElementById("dc-nfpalletcap");
+            // END: NEW Manual Input IDs
             const manualNextBtn = document.getElementById("manual-next-btn");
             const manualStep2 = document.getElementById("manual-step-2");
             const originDcName = document.getElementById("origin-dc-name");
@@ -491,6 +477,12 @@
             const modalDcLoc = document.getElementById("modal-dc-loc");
             const modalDcLat = document.getElementById("modal-dc-lat");
             const modalDcLon = document.getElementById("modal-dc-lon");
+            // START: NEW Modal Input IDs
+            const modalDcFpallet = document.getElementById("modal-dc-fpallet");
+            const modalDcFpalletcap = document.getElementById("modal-dc-fpalletcap");
+            const modalDcNfpallet = document.getElementById("modal-dc-nfpallet");
+            const modalDcNfpalletcap = document.getElementById("modal-dc-nfpalletcap");
+            // END: NEW Modal Input IDs
             const modalDcCancel = document.getElementById("modal-dc-cancel");
             const modalDcSave = document.getElementById("modal-dc-save");
             const editDurationModal = document.getElementById("edit-duration-modal");
@@ -637,6 +629,12 @@
                 dcLocInput.value = "";
                 dcLatInput.value = "";
                 dcLonInput.value = "";
+                // START: Reset new fields
+                dcFpalletInput.value = "";
+                dcFpalletcapInput.value = "";
+                dcNfpalletInput.value = "";
+                dcNfpalletcapInput.value = "";
+                // END: Reset new fields
                 durationsListContainer.innerHTML = "";
                 manualStep1.classList.remove("hidden");
                 manualStep2.classList.add("hidden");
@@ -687,7 +685,7 @@
 
             /**
              * Parses the DC CSV content.
-             * Expected format: loc,name,"lat,lon"
+             * Expected format: loc,name,"lat,lon",fpallet,fpalletcap,nfpallet,nfpalletcap
              */
             function parseDcCsv(csvContent) {
                 const dcsData = [];
@@ -703,14 +701,22 @@
                 // Start from 1 to skip header
                 for (let i = 1; i < lines.length; i++) {
                     const parts = splitCsvLine(lines[i]);
-                    if (parts.length < 3) {
-                        console.warn(`Skipping malformed DC line: ${lines[i]}`);
+                    // START: UPDATED check for 7 parts
+                    if (parts.length < 7) {
+                        console.warn(`Skipping malformed DC line (expected 7 columns): ${lines[i]}`);
                         continue;
                     }
+                    // END: UPDATED check
 
                     const loc = parts[0];
                     const name = parts[1];
                     const llSource = parts[2]; // This will be "lat,lon"
+                    // START: NEW Pallet Data
+                    const fpallet = parseFloat(parts[3]) || 0;
+                    const fpalletcap = parseFloat(parts[4]) || 0;
+                    const nfpallet = parseFloat(parts[5]) || 0;
+                    const nfpalletcap = parseFloat(parts[6]) || 0;
+                    // END: NEW Pallet Data
 
                     if (!loc || !name || !llSource) {
                         console.warn(`Skipping DC line with empty fields: ${lines[i]}`);
@@ -726,7 +732,19 @@
                         continue;
                     }
 
-                    dcsData.push({ name, loc, lat, lon, id: null });
+                    // START: UPDATED push object
+                    dcsData.push({
+                        name,
+                        loc,
+                        lat,
+                        lon,
+                        fpallet,
+                        fpalletcap,
+                        nfpallet,
+                        nfpalletcap,
+                        id: null
+                    });
+                    // END: UPDATED push object
                 }
                 return dcsData;
             }
@@ -943,8 +961,14 @@
                     const dcsBatch = writeBatch(db);
                     processedDcsData.forEach((dc) => {
                         const docRef = doc(db, "dcs", dc.name);
-                        dc.lat = Number(dc.lat);
-                        dc.lon = Number(dc.lon);
+                        // START: Ensure all data is numeric
+                        dc.lat = Number(dc.lat) || 0;
+                        dc.lon = Number(dc.lon) || 0;
+                        dc.fpallet = Number(dc.fpallet) || 0;
+                        dc.fpalletcap = Number(dc.fpalletcap) || 0;
+                        dc.nfpallet = Number(dc.nfpallet) || 0;
+                        dc.nfpalletcap = Number(dc.nfpalletcap) || 0;
+                        // END: Ensure all data is numeric
                         dcsBatch.set(docRef, dc, { merge: true });
                     });
                     await dcsBatch.commit();
@@ -1027,14 +1051,20 @@
 
             manualUploadButton.addEventListener("click", async () => {
                 statusFinal.textContent = "";
+                // START: UPDATED Manual Data Object
                 const dcsData = [
                     {
                         name: dcNameInput.value,
                         loc: dcLocInput.value,
                         lat: Number(dcLatInput.value),
-                        lon: Number(dcLonInput.value)
+                        lon: Number(dcLonInput.value),
+                        fpallet: Number(dcFpalletInput.value) || 0,
+                        fpalletcap: Number(dcFpalletcapInput.value) || 0,
+                        nfpallet: Number(dcNfpalletInput.value) || 0,
+                        nfpalletcap: Number(dcNfpalletcapInput.value) || 0
                     }
                 ];
+                // END: UPDATED Manual Data Object
                 const originDCName = dcNameInput.value;
                 const innerDurations = {};
                 const durationsData = {};
@@ -1130,18 +1160,22 @@
                 filteredDcs.forEach((dc) => {
                     const item = document.createElement("div");
                     item.className = "dc-list-item";
+                    // START: UPDATED List Item Display
                     item.innerHTML = `
                     <div>
                         <h4 class="font-semibold text-lg text-blue-700">${dc.name}</h4>
                         <p class="text-sm text-gray-600">Loc: ${dc.loc}</p>
                         <p class="text-xs text-gray-500">Lat: ${dc.lat}, Lon: ${dc.lon}</p>
+                        <p class="text-xs text-gray-500">Food: ${dc.fpallet || 0}/${dc.fpalletcap || 0} | Non-Food: ${dc.nfpallet || 0
+                        }/${dc.nfpalletcap || 0}</p>
                     </div>
                     <div class="flex space-x-2">
                         <button data-dcname="${dc.name}" class="manage-durations-btn bg-blue-600 text-white font-medium py-2 px-3 rounded-lg text-sm hover:bg-blue-700">Manage Durations</button>
                         <button data-dcname="${dc.name}" class="edit-dc-btn bg-gray-200 text-gray-800 font-medium py-2 px-3 rounded-lg text-sm hover:bg-gray-300">Edit</button>
                         <button data-dcname="${dc.name}" class="delete-dc-btn bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-red-200">Delete</button>
                     </div>
-                `;
+                    `;
+                    // END: UPDATED List Item Display
                     dcListContainer.appendChild(item);
                 });
                 dcListContainer.querySelectorAll(".manage-durations-btn").forEach((btn) => {
@@ -1230,6 +1264,12 @@
                 modalDcLoc.value = dc.loc;
                 modalDcLat.value = dc.lat;
                 modalDcLon.value = dc.lon;
+                // START: Populate new fields
+                modalDcFpallet.value = dc.fpallet || 0;
+                modalDcFpalletcap.value = dc.fpalletcap || 0;
+                modalDcNfpallet.value = dc.nfpallet || 0;
+                modalDcNfpalletcap.value = dc.nfpalletcap || 0;
+                // END: Populate new fields
                 editDcModal.classList.remove("hidden");
             }
             modalDcCancel.addEventListener("click", () => {
@@ -1240,11 +1280,17 @@
                 const dcName = modalDcName.value;
                 const docRef = doc(db, "dcs", dcName);
                 try {
+                    // START: UPDATED Save Object
                     await updateDoc(docRef, {
                         loc: modalDcLoc.value,
                         lat: Number(modalDcLat.value),
-                        lon: Number(modalDcLon.value)
+                        lon: Number(modalDcLon.value),
+                        fpallet: Number(modalDcFpallet.value) || 0,
+                        fpalletcap: Number(modalDcFpalletcap.value) || 0,
+                        nfpallet: Number(modalDcNfpallet.value) || 0,
+                        nfpalletcap: Number(modalDcNfpalletcap.value) || 0
                     });
+                    // END: UPDATED Save Object
                     editDcModal.classList.add("hidden");
                 } catch (error) {
                     console.error("Error updating DC:", error);
