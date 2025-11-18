@@ -80,32 +80,34 @@
 
                     <div>
                         <div id="file-upload-container">
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <div class="mb-4">
+                            <div class="bg-gray-50 p-6 rounded-lg space-y-6">
+                                <div class="border-b pb-6 border-gray-200">
                                     <label for="dc-file-input" class="block mb-2 text-sm font-medium text-gray-700">1.
-                                        DC File (.csv)</label>
+                                        Upload DC File (.csv)</label>
                                     <input id="dc-file-input" type="file" accept=".csv,.txt"
-                                        class="file-input-custom" />
+                                        class="file-input-custom mb-3" />
+                                    <button id="dc-file-upload-button"
+                                        class="w-full bg-emerald-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        Upload DC File
+                                    </button>
                                 </div>
 
-                                <div class="mb-6">
+                                <div>
                                     <label for="durations-file-input"
-                                        class="block mb-2 text-sm font-medium text-gray-700">2. Durations File
+                                        class="block mb-2 text-sm font-medium text-gray-700">2. Upload Durations File
                                         (.csv)</label>
                                     <input id="durations-file-input" type="file" accept=".csv,.txt"
-                                        class="file-input-custom" />
+                                        class="file-input-custom mb-3" />
+                                    <button id="durations-file-upload-button"
+                                        class="w-full bg-emerald-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        Upload Durations File
+                                    </button>
                                 </div>
-                                <p class="text-xs text-gray-500 mb-4 -mt-2">
+                                <p class="text-xs text-gray-500 text-center">
                                     Note: Files should be Comma-Separated (CSV)
                                 </p>
-
-                                <button id="file-upload-button"
-                                    class="w-full bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                    Upload From Files
-                                </button>
                             </div>
                         </div>
-
                         <div id="manual-input-container" class="hidden">
                             <div id="manual-step-1">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Step 1: Enter DC Details</h3>
@@ -177,6 +179,7 @@
                                 <h3 class="text-lg font-semibold text-gray-700 mb-1">Step 2: Add Durations</h3>
                                 <p class="text-sm text-gray-600 mb-4">
                                     Enter durations *from* <strong id="origin-dc-name" class="text-blue-600"></strong>.
+                                    (Optional: you can skip this to only add the DC)
                                 </p>
 
                                 <div id="durations-list-container" class="space-y-3 max-h-60 overflow-y-auto pr-2">
@@ -267,7 +270,6 @@
                 </div>
             </div>
         </div>
-
         <div id="edit-dc-modal" class="modal-backdrop hidden">
             <div class="modal-content">
                 <h3 class="text-xl font-semibold mb-4">Edit DC Details</h3>
@@ -330,6 +332,7 @@
                 </div>
             </div>
         </div>
+
         <div id="edit-duration-modal" class="modal-backdrop hidden">
             <div class="modal-content">
                 <h3 id="modal-duration-title" class="text-xl font-semibold mb-4">Edit Duration</h3>
@@ -427,6 +430,7 @@
             let currentDurations = {};
             let currentDeleteContext = {};
 
+            // --- Query Selectors ---
             const viewUploaderBtn = document.getElementById("view-uploader-btn");
             const viewEditorBtn = document.getElementById("view-editor-btn");
             const uploaderView = document.getElementById("uploader-view");
@@ -435,20 +439,21 @@
             const toggleManualBtn = document.getElementById("toggle-manual-btn");
             const fileUploadContainer = document.getElementById("file-upload-container");
             const manualInputContainer = document.getElementById("manual-input-container");
-            const dcFileInput = document.getElementById("dc-file-input"); // Renamed
-            const durationsFileInput = document.getElementById("durations-file-input"); // New
-            const fileUploadButton = document.getElementById("file-upload-button");
+            const dcFileInput = document.getElementById("dc-file-input");
+            const durationsFileInput = document.getElementById("durations-file-input");
+            // START: NEW File Upload Buttons
+            const dcFileUploadButton = document.getElementById("dc-file-upload-button");
+            const durationsFileUploadButton = document.getElementById("durations-file-upload-button");
+            // END: NEW File Upload Buttons
             const manualStep1 = document.getElementById("manual-step-1");
             const dcNameInput = document.getElementById("dc-name");
             const dcLocInput = document.getElementById("dc-loc");
             const dcLatInput = document.getElementById("dc-lat");
             const dcLonInput = document.getElementById("dc-lon");
-            // START: NEW Manual Input IDs
             const dcFpalletInput = document.getElementById("dc-fpallet");
             const dcFpalletcapInput = document.getElementById("dc-fpalletcap");
             const dcNfpalletInput = document.getElementById("dc-nfpallet");
             const dcNfpalletcapInput = document.getElementById("dc-nfpalletcap");
-            // END: NEW Manual Input IDs
             const manualNextBtn = document.getElementById("manual-next-btn");
             const manualStep2 = document.getElementById("manual-step-2");
             const originDcName = document.getElementById("origin-dc-name");
@@ -477,12 +482,10 @@
             const modalDcLoc = document.getElementById("modal-dc-loc");
             const modalDcLat = document.getElementById("modal-dc-lat");
             const modalDcLon = document.getElementById("modal-dc-lon");
-            // START: NEW Modal Input IDs
             const modalDcFpallet = document.getElementById("modal-dc-fpallet");
             const modalDcFpalletcap = document.getElementById("modal-dc-fpalletcap");
             const modalDcNfpallet = document.getElementById("modal-dc-nfpallet");
             const modalDcNfpalletcap = document.getElementById("modal-dc-nfpalletcap");
-            // END: NEW Modal Input IDs
             const modalDcCancel = document.getElementById("modal-dc-cancel");
             const modalDcSave = document.getElementById("modal-dc-save");
             const editDurationModal = document.getElementById("edit-duration-modal");
@@ -604,7 +607,10 @@
                 } catch (error) {
                     console.error("Firebase initialization failed:", error);
                     updateStatus(statusAuth, "error", "Connection failed! Check your config keys.");
-                    fileUploadButton.disabled = true;
+                    // START: UPDATED Disabled buttons
+                    dcFileUploadButton.disabled = true;
+                    durationsFileUploadButton.disabled = true;
+                    // END: UPDATED Disabled buttons
                     manualNextBtn.disabled = true;
                     manualUploadButton.disabled = true;
                 }
@@ -616,40 +622,47 @@
                 element.childNodes[2].textContent = ` ${message}`;
             }
 
+            // START: UPDATED resetUploader
             function resetUploader() {
-                fileUploadButton.disabled = false;
-                fileUploadButton.textContent = "Upload From File";
+                dcFileUploadButton.disabled = false;
+                dcFileUploadButton.textContent = "Upload DC File";
+                durationsFileUploadButton.disabled = false;
+                durationsFileUploadButton.textContent = "Upload Durations File";
+
                 manualUploadButton.disabled = false;
                 manualUploadButton.textContent = "Upload Manual Data";
                 uploadAnotherButton.classList.add("hidden");
+
                 dcFileInput.value = null;
                 durationsFileInput.value = null;
-                fileUploadButton.textContent = "Upload From Files";
+
                 dcNameInput.value = "";
                 dcLocInput.value = "";
                 dcLatInput.value = "";
                 dcLonInput.value = "";
-                // START: Reset new fields
                 dcFpalletInput.value = "";
                 dcFpalletcapInput.value = "";
                 dcNfpalletInput.value = "";
                 dcNfpalletcapInput.value = "";
-                // END: Reset new fields
+
                 durationsListContainer.innerHTML = "";
                 manualStep1.classList.remove("hidden");
                 manualStep2.classList.add("hidden");
+
                 toggleFileBtn.classList.add("active");
                 toggleFileBtn.classList.remove("inactive");
                 toggleManualBtn.classList.add("inactive");
                 toggleManualBtn.classList.remove("active");
                 fileUploadContainer.classList.remove("hidden");
                 manualInputContainer.classList.add("hidden");
+
                 updateStatus(statusFile, "", "Pending");
                 updateStatus(statusDcs, "", "Pending");
                 updateStatus(statusDurations, "", "Pending");
                 statusFinal.textContent = "";
                 viewUploaderBtn.click();
             }
+            // END: UPDATED resetUploader
 
             /**
              * Utility to split a CSV line, handling quoted fields.
@@ -701,22 +714,18 @@
                 // Start from 1 to skip header
                 for (let i = 1; i < lines.length; i++) {
                     const parts = splitCsvLine(lines[i]);
-                    // START: UPDATED check for 7 parts
                     if (parts.length < 7) {
                         console.warn(`Skipping malformed DC line (expected 7 columns): ${lines[i]}`);
                         continue;
                     }
-                    // END: UPDATED check
 
                     const loc = parts[0];
                     const name = parts[1];
                     const llSource = parts[2]; // This will be "lat,lon"
-                    // START: NEW Pallet Data
                     const fpallet = parseFloat(parts[3]) || 0;
                     const fpalletcap = parseFloat(parts[4]) || 0;
                     const nfpallet = parseFloat(parts[5]) || 0;
                     const nfpalletcap = parseFloat(parts[6]) || 0;
-                    // END: NEW Pallet Data
 
                     if (!loc || !name || !llSource) {
                         console.warn(`Skipping DC line with empty fields: ${lines[i]}`);
@@ -732,7 +741,6 @@
                         continue;
                     }
 
-                    // START: UPDATED push object
                     dcsData.push({
                         name,
                         loc,
@@ -744,7 +752,6 @@
                         nfpalletcap,
                         id: null
                     });
-                    // END: UPDATED push object
                 }
                 return dcsData;
             }
@@ -892,9 +899,10 @@
                 originDcName.textContent = dcNameInput.value;
                 manualStep1.classList.add("hidden");
                 manualStep2.classList.remove("hidden");
-                if (durationsListContainer.children.length === 0) {
-                    addDurationRow();
-                }
+                // Don't auto-add a duration row, make it optional
+                // if (durationsListContainer.children.length === 0) {
+                //     addDurationRow();
+                // }
             });
 
             manualBackBtn.addEventListener("click", () => {
@@ -918,14 +926,13 @@
 
             addDurationBtn.addEventListener("click", addDurationRow);
 
-            async function processAndUpload(dcsData, durationsData) {
-                fileUploadButton.disabled = true;
-                manualUploadButton.disabled = true;
-                fileUploadButton.textContent = "Uploading...";
-                manualUploadButton.textContent = "Uploading...";
-
+            // START: REFACTORED UPLOAD LOGIC
+            /**
+             * Processes and uploads only the DC data.
+             */
+            async function processDcsUpload(dcsData) {
+                updateStatus(statusDcs, "pending", "Checking existing data in database...");
                 try {
-                    updateStatus(statusDcs, "pending", "Checking existing data in database...");
                     const dcsCollectionRef = collection(db, "dcs");
                     const dcsSnapshot = await getDocs(dcsCollectionRef);
                     let lastId = 0;
@@ -961,20 +968,33 @@
                     const dcsBatch = writeBatch(db);
                     processedDcsData.forEach((dc) => {
                         const docRef = doc(db, "dcs", dc.name);
-                        // START: Ensure all data is numeric
                         dc.lat = Number(dc.lat) || 0;
                         dc.lon = Number(dc.lon) || 0;
                         dc.fpallet = Number(dc.fpallet) || 0;
                         dc.fpalletcap = Number(dc.fpalletcap) || 0;
                         dc.nfpallet = Number(dc.nfpallet) || 0;
                         dc.nfpalletcap = Number(dc.nfpalletcap) || 0;
-                        // END: Ensure all data is numeric
                         dcsBatch.set(docRef, dc, { merge: true });
                     });
                     await dcsBatch.commit();
                     updateStatus(statusDcs, "success", `Uploaded/updated ${processedDcsData.length} documents.`);
+                    statusFinal.textContent = "🎉 DC Upload Complete! 🎉";
+                    statusFinal.style.color = "#10B981";
+                } catch (error) {
+                    console.error("DC Upload failed:", error);
+                    updateStatus(statusDcs, "error", "Upload failed. Check console.");
+                    statusFinal.textContent = "DC Upload Failed. See console for details.";
+                    statusFinal.style.color = "#EF4444";
+                    throw error; // Re-throw to be caught by handler
+                }
+            }
 
-                    updateStatus(statusDurations, "pending", "Uploading new/updated Durations documents...");
+            /**
+             * Processes and uploads only the Durations data.
+             */
+            async function processDurationsUpload(durationsData) {
+                updateStatus(statusDurations, "pending", "Uploading new/updated Durations documents...");
+                try {
                     const durationsBatch = writeBatch(db);
                     Object.keys(durationsData).forEach((originName) => {
                         if (typeof originName !== "string" || originName.trim() === "") {
@@ -993,65 +1013,99 @@
                         "success",
                         `Uploaded/updated ${Object.keys(durationsData).length} documents.`
                     );
-
-                    statusFinal.textContent = "🎉 Upload Complete! 🎉";
+                    statusFinal.textContent = "🎉 Durations Upload Complete! 🎉";
                     statusFinal.style.color = "#10B981";
-                    fileUploadButton.textContent = "Done!";
-                    manualUploadButton.textContent = "Done!";
-                    uploadAnotherButton.classList.remove("hidden");
                 } catch (error) {
-                    console.error("Upload failed during write to Firebase:", error);
-                    updateStatus(statusDcs, "error", "Upload failed. Check console.");
+                    console.error("Durations Upload failed:", error);
                     updateStatus(statusDurations, "error", "Upload failed. Check console.");
-                    statusFinal.textContent = "Upload Failed. See console for details.";
+                    statusFinal.textContent = "Durations Upload Failed. See console for details.";
                     statusFinal.style.color = "#EF4444";
-                    fileUploadButton.textContent = "Failed";
-                    manualUploadButton.textContent = "Failed";
-                    uploadAnotherButton.classList.remove("hidden");
+                    throw error; // Re-throw to be caught by handler
                 }
             }
 
-            fileUploadButton.addEventListener("click", async () => {
+            /**
+             * Handles the DC File Upload button click.
+             */
+            dcFileUploadButton.addEventListener("click", async () => {
                 statusFinal.textContent = "";
+                updateStatus(statusDcs, "pending", "Pending...");
+                updateStatus(statusDurations, "pending", "Pending...");
                 const dcFile = dcFileInput.files[0];
-                const durationsFile = durationsFileInput.files[0];
 
-                if (!dcFile || !durationsFile) {
-                    statusFinal.textContent = "Please select both the DC file and the Durations file.";
+                if (!dcFile) {
+                    statusFinal.textContent = "Please select a DC file.";
                     statusFinal.style.color = "#EF4444";
                     return;
                 }
 
-                let dcsData, durationsData;
+                dcFileUploadButton.disabled = true;
+                dcFileUploadButton.textContent = "Reading...";
 
                 try {
                     updateStatus(statusFile, "pending", "Reading DC file...");
                     const dcFileContent = await readFileContent(dcFile);
-                    dcsData = parseDcCsv(dcFileContent);
-                    updateStatus(statusFile, "pending", `Read ${dcsData.length} DC entries. Reading Durations file...`);
+                    const dcsData = parseDcCsv(dcFileContent);
+                    updateStatus(statusFile, "success", `Read ${dcsData.length} DC entries. Uploading...`);
 
-                    const durationsFileContent = await readFileContent(durationsFile);
-                    durationsData = parseDurationsCsv(durationsFileContent);
-                    const durationCount = Object.keys(durationsData).length;
-                    updateStatus(statusFile, "success", `Read ${durationCount} DC origins. Data is parsed.`);
-
-                    await processAndUpload(dcsData, durationsData);
+                    await processDcsUpload(dcsData);
+                    dcFileUploadButton.textContent = "Done!";
                 } catch (error) {
-                    console.error("Error reading or parsing file:", error);
+                    console.error("Error reading or parsing DC file:", error);
                     const errorMessage = `Error: ${error.message}. Check console.`;
                     updateStatus(statusFile, "error", errorMessage);
                     statusFinal.textContent = "Upload Failed. Fix file content.";
                     statusFinal.style.color = "#EF4444";
-                    fileUploadButton.textContent = "Failed";
-                    fileUploadButton.disabled = true;
+                    dcFileUploadButton.textContent = "Failed";
+                } finally {
                     uploadAnotherButton.classList.remove("hidden");
-                    return;
                 }
             });
 
+            /**
+             * Handles the Durations File Upload button click.
+             */
+            durationsFileUploadButton.addEventListener("click", async () => {
+                statusFinal.textContent = "";
+                updateStatus(statusDcs, "pending", "Pending...");
+                updateStatus(statusDurations, "pending", "Pending...");
+                const durationsFile = durationsFileInput.files[0];
+
+                if (!durationsFile) {
+                    statusFinal.textContent = "Please select a Durations file.";
+                    statusFinal.style.color = "#EF4444";
+                    return;
+                }
+
+                durationsFileUploadButton.disabled = true;
+                durationsFileUploadButton.textContent = "Reading...";
+
+                try {
+                    updateStatus(statusFile, "pending", "Reading Durations file...");
+                    const durationsFileContent = await readFileContent(durationsFile);
+                    const durationsData = parseDurationsCsv(durationsFileContent);
+                    const durationCount = Object.keys(durationsData).length;
+                    updateStatus(statusFile, "success", `Read ${durationCount} DC origins. Uploading...`);
+
+                    await processDurationsUpload(durationsData);
+                    durationsFileUploadButton.textContent = "Done!";
+                } catch (error) {
+                    console.error("Error reading or parsing Durations file:", error);
+                    const errorMessage = `Error: ${error.message}. Check console.`;
+                    updateStatus(statusFile, "error", errorMessage);
+                    statusFinal.textContent = "Upload Failed. Fix file content.";
+                    statusFinal.style.color = "#EF4444";
+                    durationsFileUploadButton.textContent = "Failed";
+                } finally {
+                    uploadAnotherButton.classList.remove("hidden");
+                }
+            });
+
+            /**
+             * Handles the Manual Upload button click.
+             */
             manualUploadButton.addEventListener("click", async () => {
                 statusFinal.textContent = "";
-                // START: UPDATED Manual Data Object
                 const dcsData = [
                     {
                         name: dcNameInput.value,
@@ -1064,10 +1118,10 @@
                         nfpalletcap: Number(dcNfpalletcapInput.value) || 0
                     }
                 ];
-                // END: UPDATED Manual Data Object
+
                 const originDCName = dcNameInput.value;
                 const innerDurations = {};
-                const durationsData = {};
+                let durationsData = {}; // Initialize as empty
                 const durationEntries = durationsListContainer.querySelectorAll(".duration-entry");
                 let isValid = true;
                 let allEntriesEmpty = true;
@@ -1091,7 +1145,6 @@
                                 if (!firstErrorMessage)
                                     firstErrorMessage = `Invalid duration format: "${destDurationText}". Use "2h 15m" or "90m".`;
                             } else {
-                                // Add " KM" if it's not already there
                                 const destKm =
                                     destKmRaw && !destKmRaw.toUpperCase().endsWith(" KM")
                                         ? `${destKmRaw} KM`
@@ -1104,24 +1157,47 @@
                         }
                     }
                 });
-                if (allEntriesEmpty && durationEntries.length > 0) {
-                    statusFinal.textContent = "Please fill in at least one valid duration entry.";
-                    statusFinal.style.color = "#EF4444";
-                    return;
-                }
-                if (!isValid) {
-                    statusFinal.textContent = firstErrorMessage;
-                    statusFinal.style.color = "#EF4444";
-                    return;
-                }
-                durationsData[originDCName] = innerDurations;
-                updateStatus(statusFile, "success", "Manual data formatted successfully.");
-                await processAndUpload(dcsData, durationsData);
-            });
 
-            // 3. "Upload Another" Button
+                if (!allEntriesEmpty) {
+                    if (!isValid) {
+                        statusFinal.textContent = firstErrorMessage;
+                        statusFinal.style.color = "#EF4444";
+                        return;
+                    }
+                    durationsData[originDCName] = innerDurations;
+                }
+                // If allEntriesEmpty is true, durationsData remains {}
+
+                updateStatus(statusFile, "success", "Manual data formatted successfully.");
+                manualUploadButton.disabled = true;
+                manualUploadButton.textContent = "Uploading...";
+
+                try {
+                    // Always upload the DC data
+                    await processDcsUpload(dcsData);
+
+                    // Conditionally upload durations only if they were added
+                    if (Object.keys(durationsData).length > 0) {
+                        await processDurationsUpload(durationsData);
+                    } else {
+                        updateStatus(statusDurations, "pending", "No durations added, skipping.");
+                    }
+
+                    statusFinal.textContent = "🎉 Manual Upload Complete! 🎉";
+                    manualUploadButton.textContent = "Done!";
+                } catch (error) {
+                    statusFinal.textContent = "Manual Upload Failed. See console.";
+                    manualUploadButton.textContent = "Failed";
+                } finally {
+                    uploadAnotherButton.classList.remove("hidden");
+                }
+            });
+            // END: REFACTORED UPLOAD LOGIC
+
+            // "Upload Another" Button
             uploadAnotherButton.addEventListener("click", resetUploader);
 
+            // --- Editor & Modal Logic (Unchanged) ---
             function listenForDcUpdates() {
                 const dcsCollectionRef = collection(db, "dcs");
                 onSnapshot(
@@ -1160,7 +1236,6 @@
                 filteredDcs.forEach((dc) => {
                     const item = document.createElement("div");
                     item.className = "dc-list-item";
-                    // START: UPDATED List Item Display
                     item.innerHTML = `
                     <div>
                         <h4 class="font-semibold text-lg text-blue-700">${dc.name}</h4>
@@ -1174,8 +1249,7 @@
                         <button data-dcname="${dc.name}" class="edit-dc-btn bg-gray-200 text-gray-800 font-medium py-2 px-3 rounded-lg text-sm hover:bg-gray-300">Edit</button>
                         <button data-dcname="${dc.name}" class="delete-dc-btn bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-red-200">Delete</button>
                     </div>
-                    `;
-                    // END: UPDATED List Item Display
+                `;
                     dcListContainer.appendChild(item);
                 });
                 dcListContainer.querySelectorAll(".manage-durations-btn").forEach((btn) => {
@@ -1239,7 +1313,6 @@
                 }
             }
 
-            // --- Editor View Navigation ---
             function showDcListView() {
                 dcListView.classList.remove("hidden");
                 durationListView.classList.add("hidden");
@@ -1256,7 +1329,6 @@
             backToDcsBtn.addEventListener("click", showDcListView);
             dcSearchInput.addEventListener("input", renderDcList);
 
-            // --- DC Edit Modal Logic ---
             function openDcEditModal(dcName) {
                 const dc = allDcs.find((d) => d.name === dcName);
                 if (!dc) return;
@@ -1264,12 +1336,10 @@
                 modalDcLoc.value = dc.loc;
                 modalDcLat.value = dc.lat;
                 modalDcLon.value = dc.lon;
-                // START: Populate new fields
                 modalDcFpallet.value = dc.fpallet || 0;
                 modalDcFpalletcap.value = dc.fpalletcap || 0;
                 modalDcNfpallet.value = dc.nfpallet || 0;
                 modalDcNfpalletcap.value = dc.nfpalletcap || 0;
-                // END: Populate new fields
                 editDcModal.classList.remove("hidden");
             }
             modalDcCancel.addEventListener("click", () => {
@@ -1280,7 +1350,6 @@
                 const dcName = modalDcName.value;
                 const docRef = doc(db, "dcs", dcName);
                 try {
-                    // START: UPDATED Save Object
                     await updateDoc(docRef, {
                         loc: modalDcLoc.value,
                         lat: Number(modalDcLat.value),
@@ -1290,17 +1359,14 @@
                         nfpallet: Number(modalDcNfpallet.value) || 0,
                         nfpalletcap: Number(modalDcNfpalletcap.value) || 0
                     });
-                    // END: UPDATED Save Object
                     editDcModal.classList.add("hidden");
                 } catch (error) {
                     console.error("Error updating DC:", error);
-                    // Use a custom modal for errors, not alert()
                     statusFinal.textContent = "Failed to update DC. Check console.";
                     statusFinal.style.color = "#EF4444";
                 }
             });
 
-            // --- Duration Add/Edit Modal Logic ---
             function openDurationModal(mode, destName = null) {
                 modalDurationError.classList.add("hidden");
 
@@ -1354,17 +1420,15 @@
                 }
 
                 if (errorMsg) {
-                    // Show error in the modal
                     modalDurationError.textContent = errorMsg;
                     modalDurationError.classList.remove("hidden");
-                    return; // Stop execution
+                    return;
                 }
 
                 if (mode === "edit" && origName !== newDestName) {
                     delete currentDurations[origName];
                 }
 
-                // Add " KM" if it's not already there
                 const kmValue = kmRaw && !String(kmRaw).toUpperCase().endsWith(" KM") ? `${kmRaw} KM` : kmRaw;
 
                 currentDurations[newDestName] = {
@@ -1384,7 +1448,6 @@
                 }
             });
 
-            // --- Delete Confirmation Modal Logic ---
             function openDeleteModal(type, name1, name2 = null) {
                 currentDeleteContext = { type, name1, name2 };
                 if (type === "dc") {
@@ -1422,4 +1485,5 @@
             });
         </script>
     </body>
+
 </html>
