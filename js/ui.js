@@ -17,7 +17,7 @@ const initMap = () => {
     markersLayer = L.layerGroup().addTo(map);
 };
 
-const updateMapMarkers = (factories, searchLocation, comparisonList) => {
+const updateMapMarkers = (factories, searchLocation, comparisonList, avoidedList = []) => {
     markersLayer.clearLayers();
 
     if (activeRoutingControls.length > 0) {
@@ -69,9 +69,18 @@ const updateMapMarkers = (factories, searchLocation, comparisonList) => {
         let iconUrl;
         iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png";
 
+        // Check avoided status
+        const avoidedItem = avoidedList.find(item => item.target === factory.name);
+
         // Add routes only for checked items
         if (isChecked) {
-            const routeColor = getComparisonColor(factory.id) || "#3388ff";
+            let routeColor = getComparisonColor(factory.id) || "#3388ff";
+
+            // Override color if avoided
+            if (avoidedItem) {
+                routeColor = "#FF4500"; // OrangeRed
+            }
+
             const control = L.Routing.control({
                 waypoints: [L.latLng(searchLocation.lat, searchLocation.lon), L.latLng(factory.lat, factory.lon)],
                 routeWhileDragging: false,
@@ -95,7 +104,17 @@ const updateMapMarkers = (factories, searchLocation, comparisonList) => {
         }).addTo(markersLayer);
 
         // START: UPDATED POPUP CONTENT
+        let popupWarning = "";
+        if (avoidedItem) {
+            popupWarning = `
+                <div style="background-color: #fee2e2; color: #991b1b; padding: 4px; border-radius: 4px; margin-bottom: 4px; font-weight: bold; font-size: 0.8em; text-align: center;">
+                    ⚠️ AVOID: ${avoidedItem.reason}
+                </div>
+            `;
+        }
+
         const popupContent = `
+            ${popupWarning}
             <b>${factory.name}</b><br>
             ${factory.roadKm} (${factory.duration})
             <hr style="margin: 4px 0;">
@@ -135,7 +154,7 @@ const updateMapMarkers = (factories, searchLocation, comparisonList) => {
     }
 };
 
-const renderFactoryList = (factoriesToRender, comparisonList) => {
+const renderFactoryList = (factoriesToRender, comparisonList, avoidedList = []) => {
     factoryList.innerHTML = "";
     if (factoriesToRender.length === 0) {
         factoryList.innerHTML = `<p class="text-gray-500 italic p-4 text-center">No results match your filter.</p>`;
@@ -146,11 +165,11 @@ const renderFactoryList = (factoriesToRender, comparisonList) => {
 
     factoriesToRender.forEach((factory) => {
         const routeColor = getComparisonColor(factory.id);
-        factoryList.appendChild(createFactoryCard(factory, comparisonList, routeColor, isComparing));
+        factoryList.appendChild(createFactoryCard(factory, comparisonList, routeColor, isComparing, avoidedList));
     });
 };
 
-const createFactoryCard = (factory, comparisonList, routeColor, isComparing) => {
+const createFactoryCard = (factory, comparisonList, routeColor, isComparing, avoidedList = []) => {
     const card = document.createElement("div");
 
     const distanceHtml =
@@ -167,6 +186,22 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing) => 
     const clickableAreaClasses = ["flex-grow", "flex", "justify-between", "items-start", "cursor-pointer"];
     const checkboxStyle = routeColor ? `style="accent-color: ${routeColor};"` : "";
 
+    const avoidedItem = avoidedList.find(item => item.target === factory.name);
+    let warningHtml = "";
+    if (avoidedItem) {
+        warningHtml = `
+            <div class="mt-2 p-2 bg-red-100 border border-red-200 text-red-800 rounded-lg text-xs font-semibold">
+                <span class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Avoided Route
+                </span>
+                <p class="mt-1 font-normal text-red-700">Reason: ${avoidedItem.reason}</p>
+            </div>
+        `;
+    }
+
     // START: UPDATED CARD HTML
     card.innerHTML = `
         <input type="checkbox" data-id="${factory.id}" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mr-2 flex-shrink-0" ${isChecked} ${checkboxStyle}>
@@ -178,6 +213,7 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing) => 
                     Food: <span class="font-medium">${factory.fpallet || 0}</span> / ${factory.fpalletcap || 0}  
                     <br>Non-Food: <span class="font-medium">${factory.nfpallet || 0}</span> / ${factory.nfpalletcap || 0}
                 </div>
+                ${warningHtml}
             </div>
             <div class="text-right flex-shrink-0 ml-4 pointer-events-none">
                 ${distanceHtml}
@@ -240,7 +276,7 @@ const displaySuggestions = (suggestions, query) => {
     suggestionsContainer.classList.remove("hidden");
 };
 
-const displayResults = (foundFactories, searchLocation, comparisonList) => {
+const displayResults = (foundFactories, searchLocation, comparisonList, avoidedList = []) => {
     initialMessage.classList.add("hidden");
     targetCitySpan.textContent = searchLocation.name;
     factoryCountSpan.textContent = `(${foundFactories.length} results)`;
@@ -251,8 +287,8 @@ const displayResults = (foundFactories, searchLocation, comparisonList) => {
 
     if (foundFactories.length > 0) {
         lastRadarData = { factories: foundFactories, searchLocation };
-        updateMapMarkers(foundFactories, searchLocation, comparisonList);
-        renderFactoryList(foundFactories, comparisonList);
+        updateMapMarkers(foundFactories, searchLocation, comparisonList, avoidedList);
+        renderFactoryList(foundFactories, comparisonList, avoidedList);
     } else {
         lastRadarData = { factories: [], searchLocation: null };
         currentlyDisplayedOnRadar = [];

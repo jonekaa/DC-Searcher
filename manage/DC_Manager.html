@@ -267,6 +267,28 @@
                             + Add New Duration
                         </button>
                     </div>
+
+                    <div id="avoided-list-view" class="hidden">
+                        <button id="back-to-dcs-from-avoided-btn"
+                            class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Back to DC List
+                        </button>
+                        <h3 id="avoided-view-title" class="text-xl font-semibold text-gray-800 mb-4">
+                            Manage Avoided Destinations
+                        </h3>
+                        <div id="avoided-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+                            <p id="avoided-list-loading" class="text-gray-500">Loading avoided destinations...</p>
+                        </div>
+                        <button id="add-new-avoided-btn"
+                            class="mt-4 w-full bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition border border-red-700">
+                            + Add New Avoided Destination
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -368,6 +390,38 @@
             </div>
         </div>
 
+        <div id="add-avoided-modal" class="modal-backdrop hidden">
+            <div class="modal-content">
+                <h3 id="modal-avoided-title" class="text-xl font-semibold mb-4">Add Avoided Destination</h3>
+                <p id="modal-avoided-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="modal-avoided-target" class="block mb-1 text-sm font-medium text-gray-700">Target DC
+                            to Avoid</label>
+                        <select id="modal-avoided-target" class="form-input"></select>
+                    </div>
+                    <div>
+                        <label for="modal-avoided-reason"
+                            class="block mb-1 text-sm font-medium text-gray-700">Reason</label>
+                        <input id="modal-avoided-reason" type="text" placeholder="e.g., Road construction"
+                            class="form-input" />
+                        <p class="text-xs text-gray-500 mt-1">Note: This will also add an avoidance rule for the target
+                            DC back to this DC.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="modal-avoided-cancel"
+                        class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
+                        Cancel
+                    </button>
+                    <button id="modal-avoided-save"
+                        class="bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="delete-confirm-modal" class="modal-backdrop hidden">
             <div class="modal-content">
                 <h3 class="text-xl font-semibold mb-2">Are you sure?</h3>
@@ -411,7 +465,9 @@
                 updateDoc,
                 deleteDoc,
                 getDoc,
-                setDoc
+                setDoc,
+                arrayUnion, // NEW
+                arrayRemove // NEW
             } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
             const firebaseConfig = {
@@ -428,6 +484,7 @@
             let allDcs = [];
             let currentEditingDcName = null;
             let currentDurations = {};
+            let currentAvoided = []; // NEW
             let currentDeleteContext = {};
 
             // --- Query Selectors ---
@@ -500,6 +557,21 @@
             const deleteConfirmText = document.getElementById("delete-confirm-text");
             const modalDeleteCancel = document.getElementById("modal-delete-cancel");
             const modalDeleteConfirm = document.getElementById("modal-delete-confirm");
+
+            // NEW SELECTORS
+            const avoidedListView = document.getElementById("avoided-list-view");
+            const backToDcsFromAvoidedBtn = document.getElementById("back-to-dcs-from-avoided-btn");
+            const avoidedViewTitle = document.getElementById("avoided-view-title");
+            const avoidedList = document.getElementById("avoided-list");
+            const avoidedListLoading = document.getElementById("avoided-list-loading");
+            const addNewAvoidedBtn = document.getElementById("add-new-avoided-btn");
+            const addAvoidedModal = document.getElementById("add-avoided-modal");
+            const modalAvoidedTitle = document.getElementById("modal-avoided-title");
+            const modalAvoidedError = document.getElementById("modal-avoided-error");
+            const modalAvoidedTarget = document.getElementById("modal-avoided-target");
+            const modalAvoidedReason = document.getElementById("modal-avoided-reason");
+            const modalAvoidedCancel = document.getElementById("modal-avoided-cancel");
+            const modalAvoidedSave = document.getElementById("modal-avoided-save");
             const forgotPasswordBtn = document.getElementById("forgot-password-btn");
 
             (async () => {
@@ -1245,12 +1317,16 @@
                         }/${dc.nfpalletcap || 0}</p>
                     </div>
                     <div class="flex space-x-2">
-                        <button data-dcname="${dc.name}" class="manage-durations-btn bg-blue-600 text-white font-medium py-2 px-3 rounded-lg text-sm hover:bg-blue-700">Manage Durations</button>
+                        <button data-dcname="${dc.name}" class="manage-avoided-btn bg-orange-100 text-orange-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-orange-200">Avoids</button>
+                        <button data-dcname="${dc.name}" class="manage-durations-btn bg-blue-600 text-white font-medium py-2 px-3 rounded-lg text-sm hover:bg-blue-700">Manage</button>
                         <button data-dcname="${dc.name}" class="edit-dc-btn bg-gray-200 text-gray-800 font-medium py-2 px-3 rounded-lg text-sm hover:bg-gray-300">Edit</button>
                         <button data-dcname="${dc.name}" class="delete-dc-btn bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-red-200">Delete</button>
                     </div>
                 `;
                     dcListContainer.appendChild(item);
+                });
+                dcListContainer.querySelectorAll(".manage-avoided-btn").forEach((btn) => {
+                    btn.addEventListener("click", () => showAvoidedView(btn.dataset.dcname));
                 });
                 dcListContainer.querySelectorAll(".manage-durations-btn").forEach((btn) => {
                     btn.addEventListener("click", () => showDurationsView(btn.dataset.dcname));
@@ -1313,12 +1389,157 @@
                 }
             }
 
+            // --- AVOIDED LOGIC ---
+            async function loadAndRenderAvoided(dcName) {
+                avoidedList.innerHTML = "";
+                avoidedListLoading.classList.remove("hidden");
+                const docRef = doc(db, "avoided_destinations", dcName);
+
+                try {
+                    const docSnap = await getDoc(docRef);
+                    currentAvoided = [];
+                    if (docSnap.exists()) {
+                        // Data structure: { avoid_list: [ { target: "DC B", reason: "Reason" }, ... ] }
+                        currentAvoided = docSnap.data().avoid_list || [];
+                    }
+
+                    if (currentAvoided.length === 0) {
+                        avoidedList.innerHTML = `<p class="text-gray-500">No avoided destinations for ${dcName}.</p>`;
+                    } else {
+                        currentAvoided.forEach(item => {
+                            const div = document.createElement("div");
+                            div.className = "flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-100";
+                            div.innerHTML = `
+                                <div>
+                                    <h4 class="font-bold text-red-800">${item.target}</h4>
+                                    <p class="text-sm text-red-600">Reason: ${item.reason}</p>
+                                </div>
+                                <button class="delete-avoided-btn bg-white text-red-600 border border-red-200 font-medium py-1 px-3 rounded hover:bg-red-50" data-target="${item.target}">Remove</button>
+                            `;
+                            avoidedList.appendChild(div);
+                        });
+
+                        avoidedList.querySelectorAll(".delete-avoided-btn").forEach(btn => {
+                            btn.addEventListener("click", () => openDeleteModal("avoided", dcName, btn.dataset.target));
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error fetching avoided list:", error);
+                    avoidedList.innerHTML = `<p class="text-red-500">Error loading data. Check console.</p>`;
+                } finally {
+                    avoidedListLoading.classList.add("hidden");
+                }
+            }
+
             function showDcListView() {
                 dcListView.classList.remove("hidden");
                 durationListView.classList.add("hidden");
+                avoidedListView.classList.add("hidden"); // NEW
                 currentEditingDcName = null;
                 currentDurations = {};
             }
+            // NEW
+            function showAvoidedView(dcName) {
+                dcListView.classList.add("hidden");
+                durationListView.classList.add("hidden");
+                avoidedListView.classList.remove("hidden");
+                avoidedViewTitle.textContent = `Manage Avoided Destinations for ${dcName}`;
+                currentEditingDcName = dcName;
+                // Fetch durations too, so we can filter the add list
+                const durRef = doc(db, "durations", dcName);
+                getDoc(durRef).then(snap => {
+                    if (snap.exists()) {
+                        currentDurations = snap.data().durations || {};
+                    } else {
+                        currentDurations = {};
+                    }
+                });
+                loadAndRenderAvoided(dcName);
+            }
+
+            backToDcsFromAvoidedBtn.addEventListener("click", showDcListView);
+            addNewAvoidedBtn.addEventListener("click", () => {
+                modalAvoidedError.classList.add("hidden");
+                modalAvoidedTarget.innerHTML = '<option value="">-- Select DC to Avoid --</option>';
+                // Populate select with other DCs not already avoided
+                const existingTargets = currentAvoided.map(x => x.target);
+
+                // Filter: Must be in currentDurations AND not already avoided
+                const availableDestinations = Object.keys(currentDurations);
+
+                allDcs.forEach(dc => {
+                    if (dc.name !== currentEditingDcName
+                        && !existingTargets.includes(dc.name)
+                        && availableDestinations.includes(dc.name)) { // NEW CONDITION
+                        modalAvoidedTarget.innerHTML += `<option value="${dc.name}">${dc.name}</option>`;
+                    }
+                });
+
+                modalAvoidedReason.value = "";
+                addAvoidedModal.classList.remove("hidden");
+            });
+
+            modalAvoidedCancel.addEventListener("click", () => {
+                addAvoidedModal.classList.add("hidden");
+            });
+
+            modalAvoidedSave.addEventListener("click", async () => {
+                const targetName = modalAvoidedTarget.value;
+                const reason = modalAvoidedReason.value.trim();
+
+                if (!targetName) {
+                    modalAvoidedError.textContent = "Please select a target DC.";
+                    modalAvoidedError.classList.remove("hidden");
+                    return;
+                }
+                if (!reason) {
+                    modalAvoidedError.textContent = "Please enter a reason.";
+                    modalAvoidedError.classList.remove("hidden");
+                    return;
+                }
+
+                modalAvoidedSave.textContent = "Saving...";
+                modalAvoidedSave.disabled = true;
+
+                try {
+                    const batch = writeBatch(db);
+
+                    // 1. Add target to current DC's list
+                    const currentRef = doc(db, "avoided_destinations", currentEditingDcName);
+                    // We need to read it freshly to be safe, or just use arrayUnion which is safer for concurrency
+                    // BUT arrayUnion treats objects as unique only if all fields match. 
+                    // Let's read-modify-write for safety and consistent structure handling or utilize getDoc we did earlier?
+                    // Actually, arrayUnion is fine if we construct the object correctly.
+
+                    // However, we want to SUPPORT EDITING? No requirements for editing reason yet, just add/delete.
+                    // Let's use arrayUnion.
+                    const newItemForCurrent = { target: targetName, reason: reason };
+                    // We can use set with merge for the doc creation if it doesn't exist
+                    batch.set(currentRef, {
+                        avoid_list: arrayUnion(newItemForCurrent)
+                    }, { merge: true });
+
+                    // 2. Add current DC to target's list (Bidirectional)
+                    const targetRef = doc(db, "avoided_destinations", targetName);
+                    const newItemForTarget = { target: currentEditingDcName, reason: reason };
+                    batch.set(targetRef, {
+                        avoid_list: arrayUnion(newItemForTarget)
+                    }, { merge: true });
+
+                    await batch.commit();
+
+                    addAvoidedModal.classList.add("hidden");
+                    loadAndRenderAvoided(currentEditingDcName);
+
+                } catch (error) {
+                    console.error("Error saving avoided:", error);
+                    modalAvoidedError.textContent = "Failed to save. Check console.";
+                    modalAvoidedError.classList.remove("hidden");
+                } finally {
+                    modalAvoidedSave.textContent = "Save";
+                    modalAvoidedSave.disabled = false;
+                }
+            });
             function showDurationsView(dcName) {
                 dcListView.classList.add("hidden");
                 durationListView.classList.remove("hidden");
@@ -1452,6 +1673,8 @@
                 currentDeleteContext = { type, name1, name2 };
                 if (type === "dc") {
                     deleteConfirmText.textContent = `Do you really want to delete "${name1}"? This will also delete its entire duration list. This action cannot be undone.`;
+                } else if (type === "avoided") {
+                    deleteConfirmText.textContent = `Do you really want to remove the avoidance rule between "${name1}" and "${name2}"? This will remove it from both DCs.`;
                 } else {
                     deleteConfirmText.textContent = `Do you really want to delete the duration from "${name1}" to "${name2}"? This action cannot be undone.`;
                 }
@@ -1473,6 +1696,41 @@
                         const docRef = doc(db, "durations", name1);
                         await setDoc(docRef, { durations: currentDurations });
                         loadAndRenderDurations(name1);
+                    } else if (type === "avoided") {
+                        // Bidirectional Delete
+                        // We need to find the full objects to remove them using arrayRemove, BUT arrayRemove requires exact object match.
+                        // So we first need to read both docs to find the objects with the matching reasons...
+                        // OR we can just read-modify-write the arrays.
+
+                        try {
+                            const batch = writeBatch(db);
+
+                            // 1. Remove from name1 (currentEditingDcName)
+                            const ref1 = doc(db, "avoided_destinations", name1);
+                            const snap1 = await getDoc(ref1);
+                            if (snap1.exists()) {
+                                const list1 = snap1.data().avoid_list || [];
+                                const newList1 = list1.filter(item => item.target !== name2);
+                                batch.update(ref1, { avoid_list: newList1 });
+                            }
+
+                            // 2. Remove from name2 (the target)
+                            const ref2 = doc(db, "avoided_destinations", name2);
+                            const snap2 = await getDoc(ref2);
+                            if (snap2.exists()) {
+                                const list2 = snap2.data().avoid_list || [];
+                                const newList2 = list2.filter(item => item.target !== name1);
+                                batch.update(ref2, { avoid_list: newList2 });
+                            }
+
+                            await batch.commit();
+                            loadAndRenderAvoided(name1);
+
+                        } catch (e) {
+                            console.error("Bidirectional delete failed", e);
+                            throw e;
+                        }
+
                     }
                 } catch (error) {
                     console.error("Error deleting item:", error);

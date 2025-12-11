@@ -30,6 +30,8 @@ let comparisonList = [];
 let activeRoutingControls = [];
 let factoryMarkers = {};
 let lastRadarData = { factories: [], searchLocation: null };
+let routeWarnings = {};
+let currentAvoidedList = []; // NEW: Store persisted avoided list
 
 // =================================================================
 // SECTION 2: DATA FETCHING (FROM FIREBASE)
@@ -91,7 +93,7 @@ const findNearbyFactories = async () => {
             console.error(`Could not find a durations document matching '${searchLocation.name}'.`);
             errorMessage.textContent = `Route data for "${searchLocation.name}" not found.`;
             errorMessage.classList.remove("hidden");
-            displayResults([], searchLocation, comparisonList);
+            displayResults([], searchLocation, comparisonList, []);
             return;
         }
 
@@ -140,12 +142,26 @@ const findNearbyFactories = async () => {
     lastDisplayedFactories = filteredFactories;
     currentlyDisplayedOnRadar = filteredFactories; // Init state
 
-    setTimeout(() => displayResults(filteredFactories, searchLocation, comparisonList), 300);
+    // START: Fetch Avoided Destinations
+    currentAvoidedList = []; // Reset before fetch
+    try {
+        const avoidedDocRef = window.doc(window.db, "avoided_destinations", searchLocation.name);
+        const avoidedDoc = await window.getDoc(avoidedDocRef);
+        if (avoidedDoc.exists()) {
+            currentAvoidedList = avoidedDoc.data().avoid_list || [];
+        }
+    } catch (error) {
+        console.warn("Could not fetch avoided destinations:", error);
+        // We continue even if this fails, just without warnings
+    }
+    // END: Fetch Avoided Destinations
+
+    setTimeout(() => displayResults(filteredFactories, searchLocation, comparisonList, currentAvoidedList), 300);
 };
 
 const updateMapFromSelection = () => {
     if (!lastRadarData.searchLocation) return;
-    updateMapMarkers(lastDisplayedFactories, lastRadarData.searchLocation, comparisonList);
+    updateMapMarkers(lastDisplayedFactories, lastRadarData.searchLocation, comparisonList, currentAvoidedList);
 };
 
 const toggleComparison = (factoryId) => {
@@ -156,7 +172,7 @@ const toggleComparison = (factoryId) => {
         comparisonList.push(factoryId); // Add to list
     }
 
-    renderFactoryList(lastDisplayedFactories, comparisonList);
+    renderFactoryList(lastDisplayedFactories, comparisonList, currentAvoidedList);
     filterFactoryListDOM(listSearchInput.value);
 
     updateMapFromSelection();
@@ -196,7 +212,7 @@ function setupEventListeners() {
 
     clearComparisonButton.addEventListener("click", () => {
         comparisonList = [];
-        renderFactoryList(lastDisplayedFactories, comparisonList);
+        renderFactoryList(lastDisplayedFactories, comparisonList, currentAvoidedList);
         filterFactoryListDOM(listSearchInput.value);
         updateMapFromSelection();
     });
