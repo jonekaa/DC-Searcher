@@ -1,16 +1,17 @@
 <!doctype html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>DC Searcher</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <link
-            rel="stylesheet"
+        <link rel="stylesheet"
             href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
         <link rel="stylesheet" href="css/style.css" />
     </head>
+
     <body class="p-4 md:p-8">
         <div id="loading-screen">
             <div class="spinner"></div>
@@ -27,78 +28,47 @@
             <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
                     <div class="md:col-span-3 relative">
-                        <label for="city-input" class="block text-lg font-medium text-gray-700 mb-2"
-                            >Enter Nama PT atau Loc ID</label
-                        >
-                        <input
-                            type="text"
-                            id="city-input"
-                            placeholder="Type DC name or Loc ID ..."
-                            class="w-full p-3 border border-gray-300 rounded-lg"
-                            autocomplete="on" />
-                        <div
-                            id="suggestions-container"
-                            class="absolute z-[9999] w-full bg-white border border-gray-200 rounded-b-lg shadow-lg mt-1 hidden max-h-72 overflow-y-auto"></div>
+                        <label for="city-input" class="block text-lg font-medium text-gray-700 mb-2">Enter Nama PT atau
+                            Loc ID</label>
+                        <input type="text" id="city-input" placeholder="Type DC name or Loc ID ..."
+                            class="w-full p-3 border border-gray-300 rounded-lg" autocomplete="on" />
+                        <div id="suggestions-container"
+                            class="absolute z-[9999] w-full bg-white border border-gray-200 rounded-b-lg shadow-lg mt-1 hidden max-h-72 overflow-y-auto">
+                        </div>
                     </div>
                     <div>
-                        <label for="radius-input" class="block text-lg font-medium text-gray-700 mb-2"
-                            >Jarak (KM)</label
-                        >
-                        <input
-                            type="number"
-                            id="radius-input"
-                            placeholder="e.g., 200"
-                            min="0"
+                        <label for="radius-input" class="block text-lg font-medium text-gray-700 mb-2">Jarak
+                            (KM)</label>
+                        <input type="number" id="radius-input" placeholder="e.g., 200" min="0"
                             class="w-full p-3 border border-gray-300 rounded-lg" />
                     </div>
                     <div>
-                        <label for="duration-input" class="block text-lg font-medium text-gray-700 mb-2"
-                            >Durasi (HH:MM)</label
-                        >
-                        <input
-                            type="text"
-                            id="duration-input"
-                            placeholder="e.g., 04:30"
+                        <label for="duration-input" class="block text-lg font-medium text-gray-700 mb-2">Durasi
+                            (HH:MM)</label>
+                        <input type="text" id="duration-input" placeholder="e.g., 04:30"
                             class="w-full p-3 border border-gray-300 rounded-lg" />
                     </div>
                 </div>
                 <div class="flex items-center gap-x-3">
-                    <button
-                        id="search-button"
+                    <button id="search-button"
                         class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
                         disabled>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 inline mr-2"
-                            viewBox="0 0 15 20"
-                            fill="currentColor"
-                            stroke-widht="2">
-                            <path
-                                fill-rule="evenodd"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" viewBox="0 0 15 20"
+                            fill="currentColor" stroke-widht="2">
+                            <path fill-rule="evenodd"
                                 d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                 clip-rule="evenodd" />
                         </svg>
                         Find DC
                     </button>
-                    <a
-                        href="manage/DC_Manager.html"
-                        class="w-1/5 text-black text-center bg-orange-300 hover:bg-orange-400 font-semibold rounded-lg px-6 py-3 rounded-lg shadow-md"
-                        >Edit DC</a
-                    >
-                    <button
-                        id="clear-button"
-                        title="Clear All"
+                    <a href="manage/DC_Manager.html"
+                        class="w-1/5 text-black text-center bg-orange-300 hover:bg-orange-400 font-semibold rounded-lg px-6 py-3 rounded-lg shadow-md">Edit
+                        DC</a>
+                    <button id="clear-button" title="Clear All"
                         class="w-1/8 bg-gray-200 hover:bg-gray-300 text-black font-semibold py-3 px-6 rounded-lg shadow-md flex items-center justify-center gap-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                         Clear
@@ -120,38 +90,20 @@
                         <h3 id="list-title" class="font-semibold text-gray-700 mb-3 border-b pb-1">Detailed List</h3>
                         <div class="flex items-center gap-x-3 mb-3">
                             <div class="relative flex-grow">
-                                <input
-                                    type="text"
-                                    id="list-search-input"
-                                    placeholder="Search in results..."
+                                <input type="text" id="list-search-input" placeholder="Search in results..."
                                     class="w-full p-2 pl-8 border border-gray-300 rounded-lg" />
-                                <svg
-                                    class="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
+                                <svg class="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            <button
-                                id="clear-comparison-button"
-                                title="Clear Selection"
+                            <button id="clear-comparison-button" title="Clear Selection"
                                 class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg shadow-md">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-5 w-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2">
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </button>
@@ -164,6 +116,12 @@
                     </div>
                 </div>
             </div>
+            <footer
+                class="sticky bottom-0 left-0 w-full text-center text-sm text-gray-600 py-2 z-[5000] backdrop-blur-xl rounded-sm">
+                <p>© 2025 DC Searcher. All rights reserved.</p>
+                <p>Source code available on <a href="https://github.com/jonekaa/DC-Searcher" target="_blank"
+                        class="text-emerald-600 hover:underline">GitHub</a></p>
+            </footer>
         </div>
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -209,4 +167,5 @@
         <script src="js/ui.js"></script>
         <script src="js/app.js"></script>
     </body>
+
 </html>
