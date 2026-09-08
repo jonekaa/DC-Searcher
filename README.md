@@ -12,35 +12,37 @@ A modern web application for discovering and analyzing distribution centers (DCs
 
 ## ✨ Features
 
-### 🔍 **Smart Search**
+### 🔍 **Smart Search & Geolocation**
 - **Autocomplete Suggestions**: Type-ahead search with real-time DC name and location ID matching
 - **Flexible Queries**: Search by company name (PT) or location identifier
-- **Keyboard Navigation**: Full arrow key and Enter support for quick selection
+- **Keyboard Navigation**: Full arrow key, Enter, and Escape support for rapid triage
+- **GPS Locate Me**: One-click geolocation button to find and route to the closest DC from current device coordinates
 
-### 📍 **Proximity Analysis**
+### 📍 **Proximity & Capacity Analysis**
 - **Radius-Based Search**: Find all DCs within a specified distance (in kilometers)
 - **Duration Filtering**: Filter results by travel time (HH:MM format)
-- **Visual Mapping**: Interactive Leaflet map with custom markers and radius circles
-- **Distance Calculation**: Precise haversine distance computation
+- **Visual Mapping**: Interactive Leaflet map with custom markers and radial boundaries
+- **Pallet Demand & Capacity Specifications**: Structured lists displaying Food and Non-Food daily demand alongside facility capacity and headroom (eliminating ambiguous percentage meters)
+- **Route Avoidance Advisories**: Automatic warning flags (`⚠️ AVOID`) against restricted routes in Firestore
 
-### 🛣️ **Route Optimization**
+### 🛣️ **Route Comparison & Drawer**
 - **Multi-Point Routing**: Compare multiple DCs with visual route overlays
-- **Interactive Selection**: Click to add/remove DCs from comparison
-- **Route Visualization**: Color-coded paths with Leaflet Routing Machine
-- **Clear Comparison**: One-click reset for route selections
+- **Side-by-Side Comparison Drawer**: Floating bottom drawer comparing average distance, travel time, and combined pallet availability
+- **Interactive Selection**: Click card or checkbox to toggle comparison
+- **Route Visualization**: Distinct color-coded polylines with Leaflet Routing Machine
+- **One-Click Reset**: Dedicated clear action for route selections
+
+### ⚡ **Performance & Build**
+- **Precompiled Tailwind CSS**: Zero runtime CDN overhead (~20KB minified CSS instead of 3MB browser script)
+- **Local Storage Caching Layer**: Instant startup and offline resilience with background stale-while-revalidate sync
+- **Zero Server Overhead**: Static HTML/CSS/ES Modules architecture deployable anywhere (GitHub Pages)
 
 ### 📊 **Data Management** (Admin Panel)
 - **Secure Authentication**: Firebase Auth with email/password
 - **Dual Upload Modes**: CSV file upload or manual data entry
 - **Real-time Sync**: Live updates using Firestore snapshots
-- **CRUD Operations**: Full create, read, update, delete for DCs and durations
+- **CRUD Operations**: Full create, read, update, delete for DCs, durations, and avoidance rules
 - **Batch Processing**: Efficient bulk uploads with validation
-
-### 🎨 **Modern UI/UX**
-- **Responsive Design**: Mobile-first with Tailwind CSS
-- **Loading States**: Smooth transitions and spinner animations
-- **Error Handling**: User-friendly error messages
-- **Search Filtering**: Real-time list filtering in results
 
 ---
 
@@ -100,18 +102,22 @@ A modern web application for discovering and analyzing distribution centers (DCs
 
 ```
 DC-Searcher/
-├── index.html              # Main search interface
+├── index.html              # Main search & interactive tactical map interface
 ├── manage/
-│   ├── DC_Manager.html     # Admin data management panel
+│   ├── DC_Manager.html     # Admin data management & batch upload portal
 │   └── css/
 │       └── manage_style.css
+├── src/
+│   └── input.css           # Tailwind source CSS with custom components
 ├── css/
-│   └── style.css           # Main application styles
+│   └── style.css           # Compiled, minified Tailwind CSS (~20KB)
 ├── js/
-│   ├── app.js              # Core application logic
-│   ├── ui.js               # UI rendering and interactions
-│   ├── utils.js            # Utility functions
-│   └── firebaseConfig.js   # Firebase configuration
+│   ├── app.js              # Core application logic & caching layer
+│   ├── ui.js               # UI rendering, card metrics & comparison drawer
+│   └── utils.js            # Parsing, distance calculation & time utilities
+├── tailwind.config.js      # Tailwind configuration with design tokens
+├── PRODUCT.md              # Product requirements document
+├── DESIGN.md               # Design language & token system
 └── README.md
 ```
 
