@@ -34,19 +34,67 @@ let routeWarnings = {};
 let currentAvoidedList = []; // NEW: Store persisted avoided list
 
 // =================================================================
-// SECTION 2: DATA FETCHING (FROM FIREBASE)
+// SECTION 2: DATA FETCHING & LOCAL CACHING (FIREBASE & STORAGE)
 // =================================================================
 
-const fetchDataFromFirebase = async () => {
+const CACHE_KEY_DCS = "dc_searcher_cached_dcs_v2";
+const CACHE_TIME_KEY = "dc_searcher_cached_time_v2";
+const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour TTL
+const durationMemoryCache = {};
+const avoidedMemoryCache = {};
+
+const directFetchFromFirebase = async () => {
     try {
-        console.log("Fetching data from Firebase...");
+        console.log("Fetching fresh data from Firebase...");
         const dcsSnapshot = await window.getDocs(window.collection(window.db, "dcs"));
         allFactories = dcsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        console.log("Data fetched successfully.");
+        try {
+            localStorage.setItem(CACHE_KEY_DCS, JSON.stringify(allFactories));
+            localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+        } catch (e) {
+            console.warn("Could not write to localStorage cache:", e);
+        }
+        console.log(`Data fetched successfully: ${allFactories.length} DCs.`);
     } catch (error) {
         console.error("Error fetching data from Firebase:", error);
         throw new Error("Could not load data from the database.");
     }
+};
+
+const refreshFirebaseCacheInBackground = async () => {
+    try {
+        const dcsSnapshot = await window.getDocs(window.collection(window.db, "dcs"));
+        const fresh = dcsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        if (fresh && fresh.length > 0) {
+            allFactories = fresh;
+            localStorage.setItem(CACHE_KEY_DCS, JSON.stringify(allFactories));
+            localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+            console.log("Background cache update complete.");
+        }
+    } catch (e) {
+        console.warn("Background cache refresh deferred:", e);
+    }
+};
+
+const fetchDataFromFirebase = async () => {
+    // Try instant local cache first
+    try {
+        const cached = localStorage.getItem(CACHE_KEY_DCS);
+        const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+        const isFresh = cachedTime && (Date.now() - parseInt(cachedTime, 10)) < CACHE_TTL_MS;
+        if (cached) {
+            allFactories = JSON.parse(cached);
+            console.log(`Loaded ${allFactories.length} DCs from local storage cache.`);
+            // Silently revalidate in background
+            refreshFirebaseCacheInBackground();
+            return;
+        }
+    } catch (e) {
+        console.warn("Cache read failed, falling back to direct network fetch:", e);
+    }
+
+    // Direct network fetch on first run or empty cache
+    await directFetchFromFirebase();
 };
 
 // =================================================================
@@ -85,25 +133,30 @@ const findNearbyFactories = async () => {
     factoryCountSpan.textContent = `(0 results)`;
 
     let destinationsFromMatrix;
-    try {
-        const durationDocRef = window.doc(window.db, "durations", searchLocation.name);
-        const durationDoc = await window.getDoc(durationDocRef);
+    if (durationMemoryCache[searchLocation.name]) {
+        destinationsFromMatrix = durationMemoryCache[searchLocation.name];
+    } else {
+        try {
+            const durationDocRef = window.doc(window.db, "durations", searchLocation.name);
+            const durationDoc = await window.getDoc(durationDocRef);
 
-        if (!durationDoc.exists()) {
-            console.error(`Could not find a durations document matching '${searchLocation.name}'.`);
-            errorMessage.textContent = `Route data for "${searchLocation.name}" not found.`;
+            if (!durationDoc.exists()) {
+                console.error(`Could not find a durations document matching '${searchLocation.name}'.`);
+                errorMessage.textContent = `Route data for "${searchLocation.name}" not found.`;
+                errorMessage.classList.remove("hidden");
+                displayResults([], searchLocation, comparisonList, []);
+                return;
+            }
+
+            destinationsFromMatrix = durationDoc.data().durations;
+            durationMemoryCache[searchLocation.name] = destinationsFromMatrix;
+        } catch (error) {
+            console.error("Error fetching duration document:", error);
+            errorMessage.textContent = "Could not load route data for this DC.";
             errorMessage.classList.remove("hidden");
-            displayResults([], searchLocation, comparisonList, []);
+            factoryList.innerHTML = "";
             return;
         }
-
-        destinationsFromMatrix = durationDoc.data().durations;
-    } catch (error) {
-        console.error("Error fetching duration document:", error);
-        errorMessage.textContent = "Could not load route data for this DC.";
-        errorMessage.classList.remove("hidden");
-        factoryList.innerHTML = "";
-        return;
     }
 
     const radiusValue = parseInt(radiusInput.value) || 0;
@@ -144,15 +197,19 @@ const findNearbyFactories = async () => {
 
     // START: Fetch Avoided Destinations
     currentAvoidedList = []; // Reset before fetch
-    try {
-        const avoidedDocRef = window.doc(window.db, "avoided_destinations", searchLocation.name);
-        const avoidedDoc = await window.getDoc(avoidedDocRef);
-        if (avoidedDoc.exists()) {
-            currentAvoidedList = avoidedDoc.data().avoid_list || [];
+    if (avoidedMemoryCache[searchLocation.name]) {
+        currentAvoidedList = avoidedMemoryCache[searchLocation.name];
+    } else {
+        try {
+            const avoidedDocRef = window.doc(window.db, "avoided_destinations", searchLocation.name);
+            const avoidedDoc = await window.getDoc(avoidedDocRef);
+            if (avoidedDoc.exists()) {
+                currentAvoidedList = avoidedDoc.data().avoid_list || [];
+                avoidedMemoryCache[searchLocation.name] = currentAvoidedList;
+            }
+        } catch (error) {
+            console.warn("Could not fetch avoided destinations:", error);
         }
-    } catch (error) {
-        console.warn("Could not fetch avoided destinations:", error);
-        // We continue even if this fails, just without warnings
     }
     // END: Fetch Avoided Destinations
 
@@ -284,6 +341,9 @@ function setupEventListeners() {
 
         const factoryId = parseInt(card.dataset.id);
         if (isNaN(factoryId)) return;
+
+        // Ignore clicks on action buttons inside the card
+        if (event.target.closest(".search-from-here-btn")) return;
 
         // Check if the click was on the checkbox itself
         if (event.target.type === "checkbox") {

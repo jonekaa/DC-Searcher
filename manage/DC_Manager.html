@@ -5,8 +5,15 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>DC Data Manager</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="css/manage_style.css" />
+        <style>
+            .hidden, [hidden] {
+                display: none !important;
+            }
+            .modal-backdrop.hidden {
+                display: none !important;
+            }
+        </style>
+        <link rel="stylesheet" href="css/manage_style.css?v=2.2" />
     </head>
 
     <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -21,7 +28,7 @@
                 Back
             </button>
             <button id="logout-button"
-                class="hidden inline-flex items-center bg-white text-red-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200">
+                class="hidden inline-flex items-center bg-white text-red-700 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition border border-gray-200" hidden>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,7 +54,7 @@
                             class="block mb-1 text-sm font-medium text-gray-700">Password</label>
                         <input id="login-password" type="password" class="form-input" />
                     </div>
-                    <p id="login-error" class="text-red-500 text-sm hidden"></p>
+                    <p id="login-error" class="text-red-500 text-sm hidden" hidden></p>
                     <button id="login-button"
                         class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
                         Login
@@ -60,7 +67,7 @@
             </div>
         </div>
 
-        <div id="main-content-view" class="hidden">
+        <div id="main-content-view" class="hidden" hidden>
             <div class="max-w-2xl w-full bg-white p-8 rounded-xl shadow-lg mt-16">
                 <header class="text-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-800">DC Data Manager</h1>
@@ -86,8 +93,9 @@
                                         Upload DC File (.csv)</label>
                                     <input id="dc-file-input" type="file" accept=".csv,.txt"
                                         class="file-input-custom mb-3" />
+                                    <div id="dc-file-preview" class="hidden mb-3 p-3 bg-white border border-gray-200 rounded-lg text-xs shadow-sm" hidden></div>
                                     <button id="dc-file-upload-button"
-                                        class="w-full bg-emerald-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        class="w-full bg-emerald-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow-md hover:bg-emerald-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                         Upload DC File
                                     </button>
                                 </div>
@@ -98,8 +106,9 @@
                                         (.csv)</label>
                                     <input id="durations-file-input" type="file" accept=".csv,.txt"
                                         class="file-input-custom mb-3" />
+                                    <div id="durations-file-preview" class="hidden mb-3 p-3 bg-white border border-gray-200 rounded-lg text-xs shadow-sm" hidden></div>
                                     <button id="durations-file-upload-button"
-                                        class="w-full bg-emerald-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        class="w-full bg-emerald-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow-md hover:bg-emerald-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                         Upload Durations File
                                     </button>
                                 </div>
@@ -108,9 +117,9 @@
                                 </p>
                             </div>
                         </div>
-                        <div id="manual-input-container" class="hidden">
+                        <div id="manual-input-container" class="hidden" hidden>
                             <div id="manual-step-1">
-                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Step 1: Enter DC Details</h3>
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">Step 1: Enter DC Details</h2>
                                 <div class="space-y-4">
                                     <div>
                                         <label for="dc-name" class="block mb-1 text-sm font-medium text-gray-700">DC
@@ -140,14 +149,13 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label for="dc-fpallet"
-                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet</label>
+                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet Demand (fpallet)</label>
                                             <input id="dc-fpallet" type="number" placeholder="e.g., 100"
                                                 class="form-input" />
                                         </div>
                                         <div>
                                             <label for="dc-fpalletcap"
-                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet
-                                                Capacity</label>
+                                                class="block mb-1 text-sm font-medium text-gray-700">Food Pallet Capacity (fpalletcap)</label>
                                             <input id="dc-fpalletcap" type="number" placeholder="e.g., 200"
                                                 class="form-input" />
                                         </div>
@@ -155,15 +163,13 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label for="dc-nfpallet"
-                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food
-                                                Pallet</label>
+                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet Demand (nfpallet)</label>
                                             <input id="dc-nfpallet" type="number" placeholder="e.g., 50"
                                                 class="form-input" />
                                         </div>
                                         <div>
                                             <label for="dc-nfpalletcap"
-                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet
-                                                Capacity</label>
+                                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet Capacity (nfpalletcap)</label>
                                             <input id="dc-nfpalletcap" type="number" placeholder="e.g., 100"
                                                 class="form-input" />
                                         </div>
@@ -176,7 +182,7 @@
                             </div>
 
                             <div id="manual-step-2" class="hidden">
-                                <h3 class="text-lg font-semibold text-gray-700 mb-1">Step 2: Add Durations</h3>
+                                <h2 class="text-lg font-semibold text-gray-800 mb-1">Step 2: Add Durations</h2>
                                 <p class="text-sm text-gray-600 mb-4">
                                     Enter durations *from* <strong id="origin-dc-name" class="text-blue-600"></strong>.
                                     (Optional: you can skip this to only add the DC)
@@ -196,7 +202,7 @@
                                         Back
                                     </button>
                                     <button id="manual-upload-button"
-                                        class="w-2/3 bg-emerald-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        class="w-2/3 bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
                                         Upload Manual Data
                                     </button>
                                 </div>
@@ -226,16 +232,16 @@
                         </div>
 
                         <button id="upload-another-button"
-                            class="hidden w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition">
+                            class="hidden w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition" hidden>
                             Upload Another
                         </button>
                     </div>
                 </div>
 
-                <div id="editor-view" class="hidden">
+                <div id="editor-view" class="hidden" hidden>
                     <div id="dc-list-view">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-semibold text-gray-800">Manage DCs</h3>
+                            <h2 class="text-xl font-semibold text-gray-800">Manage DCs</h2>
                             <div class="flex space-x-2 items-center">
                                 <input id="dc-search-input" type="text" placeholder="Search by name or loc"
                                     class="form-input w-64" />
@@ -246,7 +252,7 @@
                         </div>
                     </div>
 
-                    <div id="duration-list-view" class="hidden">
+                    <div id="duration-list-view" class="hidden" hidden>
                         <button id="back-to-dcs-btn"
                             class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
@@ -256,19 +262,19 @@
                             </svg>
                             Back to DC List
                         </button>
-                        <h3 id="duration-view-title" class="text-xl font-semibold text-gray-800 mb-4">
+                        <h2 id="duration-view-title" class="text-xl font-semibold text-gray-800 mb-4">
                             Manage Durations
-                        </h3>
+                        </h2>
                         <div id="durations-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
                             <p id="duration-list-loading" class="text-gray-500">Loading durations...</p>
                         </div>
                         <button id="add-new-duration-btn"
-                            class="mt-4 w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition border border-green-700">
+                            class="mt-4 w-full bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-emerald-800 transition border border-emerald-800">
                             + Add New Duration
                         </button>
                     </div>
 
-                    <div id="avoided-list-view" class="hidden">
+                    <div id="avoided-list-view" class="hidden" hidden>
                         <button id="back-to-dcs-from-avoided-btn"
                             class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
@@ -278,9 +284,9 @@
                             </svg>
                             Back to DC List
                         </button>
-                        <h3 id="avoided-view-title" class="text-xl font-semibold text-gray-800 mb-4">
+                        <h2 id="avoided-view-title" class="text-xl font-semibold text-gray-800 mb-4">
                             Manage Avoided Destinations
-                        </h3>
+                        </h2>
                         <div id="avoided-list" class="space-y-3 max-h-80 overflow-y-auto pr-2">
                             <p id="avoided-list-loading" class="text-gray-500">Loading avoided destinations...</p>
                         </div>
@@ -292,9 +298,10 @@
                 </div>
             </div>
         </div>
-        <div id="edit-dc-modal" class="modal-backdrop hidden">
+        <div id="edit-dc-modal" class="modal-backdrop hidden" hidden>
             <div class="modal-content">
-                <h3 class="text-xl font-semibold mb-4">Edit DC Details</h3>
+                <h2 class="text-xl font-semibold mb-4">Edit DC Details</h2>
+                <p id="modal-dc-error" class="text-red-500 text-sm mb-4 hidden" hidden></p>
                 <div class="space-y-4">
                     <div>
                         <label for="modal-dc-name" class="block mb-1 text-sm font-medium text-gray-700">DC Name
@@ -320,24 +327,24 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="modal-dc-fpallet" class="block mb-1 text-sm font-medium text-gray-700">Food
-                                Pallet</label>
+                                Pallet Demand (fpallet)</label>
                             <input id="modal-dc-fpallet" type="number" class="form-input" />
                         </div>
                         <div>
                             <label for="modal-dc-fpalletcap" class="block mb-1 text-sm font-medium text-gray-700">Food
-                                Pallet Capacity</label>
+                                Pallet Capacity (fpalletcap)</label>
                             <input id="modal-dc-fpalletcap" type="number" class="form-input" />
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="modal-dc-nfpallet" class="block mb-1 text-sm font-medium text-gray-700">Non-Food
-                                Pallet</label>
+                                Pallet Demand (nfpallet)</label>
                             <input id="modal-dc-nfpallet" type="number" class="form-input" />
                         </div>
                         <div>
                             <label for="modal-dc-nfpalletcap"
-                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet Capacity</label>
+                                class="block mb-1 text-sm font-medium text-gray-700">Non-Food Pallet Capacity (nfpalletcap)</label>
                             <input id="modal-dc-nfpalletcap" type="number" class="form-input" />
                         </div>
                     </div>
@@ -355,10 +362,10 @@
             </div>
         </div>
 
-        <div id="edit-duration-modal" class="modal-backdrop hidden">
+        <div id="edit-duration-modal" class="modal-backdrop hidden" hidden>
             <div class="modal-content">
-                <h3 id="modal-duration-title" class="text-xl font-semibold mb-4">Edit Duration</h3>
-                <p id="modal-duration-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <h2 id="modal-duration-title" class="text-xl font-semibold mb-4">Edit Duration</h2>
+                <p id="modal-duration-error" class="text-red-500 text-sm mb-4 hidden" hidden></p>
                 <div class="space-y-4">
                     <div>
                         <label for="modal-duration-dest"
@@ -390,10 +397,10 @@
             </div>
         </div>
 
-        <div id="add-avoided-modal" class="modal-backdrop hidden">
+        <div id="add-avoided-modal" class="modal-backdrop hidden" hidden>
             <div class="modal-content">
-                <h3 id="modal-avoided-title" class="text-xl font-semibold mb-4">Add Avoided Destination</h3>
-                <p id="modal-avoided-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <h2 id="modal-avoided-title" class="text-xl font-semibold mb-4">Add Avoided Destination</h2>
+                <p id="modal-avoided-error" class="text-red-500 text-sm mb-4 hidden" hidden></p>
                 <div class="space-y-4">
                     <div>
                         <label for="modal-avoided-target" class="block mb-1 text-sm font-medium text-gray-700">Target DC
@@ -422,12 +429,13 @@
             </div>
         </div>
 
-        <div id="delete-confirm-modal" class="modal-backdrop hidden">
+        <div id="delete-confirm-modal" class="modal-backdrop hidden" hidden>
             <div class="modal-content">
-                <h3 class="text-xl font-semibold mb-2">Are you sure?</h3>
+                <h2 class="text-xl font-semibold mb-2">Are you sure?</h2>
                 <p id="delete-confirm-text" class="text-gray-600 mb-6">
                     Do you really want to delete this item? This action cannot be undone.
                 </p>
+                <p id="modal-delete-error" class="text-red-500 text-sm mb-4 hidden" hidden></p>
                 <div class="flex justify-end space-x-3">
                     <button id="modal-delete-cancel"
                         class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300">
@@ -487,6 +495,19 @@
             let currentAvoided = []; // NEW
             let currentDeleteContext = {};
 
+            // --- UI Visibility Helpers ---
+            function show(element) {
+                if (!element) return;
+                element.classList.remove("hidden");
+                element.removeAttribute("hidden");
+            }
+
+            function hide(element) {
+                if (!element) return;
+                element.classList.add("hidden");
+                element.setAttribute("hidden", "");
+            }
+
             // --- Query Selectors ---
             const viewUploaderBtn = document.getElementById("view-uploader-btn");
             const viewEditorBtn = document.getElementById("view-editor-btn");
@@ -543,11 +564,12 @@
             const modalDcFpalletcap = document.getElementById("modal-dc-fpalletcap");
             const modalDcNfpallet = document.getElementById("modal-dc-nfpallet");
             const modalDcNfpalletcap = document.getElementById("modal-dc-nfpalletcap");
+            const modalDcError = document.getElementById("modal-dc-error");
             const modalDcCancel = document.getElementById("modal-dc-cancel");
             const modalDcSave = document.getElementById("modal-dc-save");
             const editDurationModal = document.getElementById("edit-duration-modal");
             const modalDurationTitle = document.getElementById("modal-duration-title");
-            const modalDurationError = document.getElementById("modal-duration-error"); // NEW
+            const modalDurationError = document.getElementById("modal-duration-error");
             const modalDurationDest = document.getElementById("modal-duration-dest");
             const modalDurationKm = document.getElementById("modal-duration-km");
             const modalDurationText = document.getElementById("modal-duration-text");
@@ -555,6 +577,7 @@
             const modalDurationSave = document.getElementById("modal-duration-save");
             const deleteConfirmModal = document.getElementById("delete-confirm-modal");
             const deleteConfirmText = document.getElementById("delete-confirm-text");
+            const modalDeleteError = document.getElementById("modal-delete-error");
             const modalDeleteCancel = document.getElementById("modal-delete-cancel");
             const modalDeleteConfirm = document.getElementById("modal-delete-confirm");
 
@@ -598,15 +621,15 @@
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             // User is logged in
-                            loginView.classList.add("hidden");
-                            mainContentView.classList.remove("hidden");
-                            logoutButton.classList.remove("hidden");
+                            hide(loginView);
+                            show(mainContentView);
+                            show(logoutButton);
                             updateStatus(statusAuth, "success", `Logged in as ${user.email}`);
                         } else {
                             // User is logged out
-                            loginView.classList.remove("hidden");
-                            mainContentView.classList.add("hidden");
-                            logoutButton.classList.add("hidden");
+                            show(loginView);
+                            hide(mainContentView);
+                            hide(logoutButton);
                             updateStatus(statusAuth, "pending", "Waiting for login...");
                         }
                     });
@@ -619,7 +642,7 @@
                             email = email.trim().toLowerCase() + "@dc-searcher.com";
                         }
 
-                        loginError.classList.add("hidden");
+                        hide(loginError);
                         loginButton.disabled = true;
                         loginButton.textContent = "Logging in...";
 
@@ -638,7 +661,7 @@
                             } else {
                                 loginError.textContent = "An error occurred. Please try again.";
                             }
-                            loginError.classList.remove("hidden");
+                            show(loginError);
                         }
                         loginButton.disabled = false;
                         loginButton.textContent = "Login";
@@ -659,8 +682,7 @@
                         await signOut(auth);
                     });
 
-                    backToHomeBtn.addEventListener("click", async () => {
-                        await signOut(auth);
+                    backToHomeBtn.addEventListener("click", () => {
                         window.location.href = "../index.html";
                     });
 
@@ -669,12 +691,12 @@
                         if (!email) {
                             document.getElementById("login-error").textContent =
                                 'Please enter your email first, then click "Forgot Password".';
-                            document.getElementById("login-error").classList.remove("hidden");
+                            show(document.getElementById("login-error"));
                             return;
                         }
 
                         document.getElementById("login-error").textContent = "Contact admin for reset password!";
-                        document.getElementById("login-error").classList.remove("hidden");
+                        show(document.getElementById("login-error"));
                     });
                 } catch (error) {
                     console.error("Firebase initialization failed:", error);
@@ -703,10 +725,21 @@
 
                 manualUploadButton.disabled = false;
                 manualUploadButton.textContent = "Upload Manual Data";
-                uploadAnotherButton.classList.add("hidden");
+                hide(uploadAnotherButton);
 
                 dcFileInput.value = null;
                 durationsFileInput.value = null;
+
+                const dcPreview = document.getElementById("dc-file-preview");
+                if (dcPreview) {
+                    dcPreview.innerHTML = "";
+                    hide(dcPreview);
+                }
+                const durationsPreview = document.getElementById("durations-file-preview");
+                if (durationsPreview) {
+                    durationsPreview.innerHTML = "";
+                    hide(durationsPreview);
+                }
 
                 dcNameInput.value = "";
                 dcLocInput.value = "";
@@ -718,15 +751,15 @@
                 dcNfpalletcapInput.value = "";
 
                 durationsListContainer.innerHTML = "";
-                manualStep1.classList.remove("hidden");
-                manualStep2.classList.add("hidden");
+                show(manualStep1);
+                hide(manualStep2);
 
                 toggleFileBtn.classList.add("active");
                 toggleFileBtn.classList.remove("inactive");
                 toggleManualBtn.classList.add("inactive");
                 toggleManualBtn.classList.remove("active");
-                fileUploadContainer.classList.remove("hidden");
-                manualInputContainer.classList.add("hidden");
+                show(fileUploadContainer);
+                hide(manualInputContainer);
 
                 updateStatus(statusFile, "", "Pending");
                 updateStatus(statusDcs, "", "Pending");
@@ -929,15 +962,15 @@
             viewUploaderBtn.addEventListener("click", () => {
                 viewUploaderBtn.classList.add("active");
                 viewEditorBtn.classList.remove("active");
-                uploaderView.classList.remove("hidden");
-                editorView.classList.add("hidden");
+                show(uploaderView);
+                hide(editorView);
             });
 
             viewEditorBtn.addEventListener("click", () => {
                 viewUploaderBtn.classList.remove("active");
                 viewEditorBtn.classList.add("active");
-                uploaderView.classList.add("hidden");
-                editorView.classList.remove("hidden");
+                hide(uploaderView);
+                show(editorView);
                 showDcListView();
             });
 
@@ -947,8 +980,8 @@
                 toggleFileBtn.classList.remove("inactive");
                 toggleManualBtn.classList.add("inactive");
                 toggleManualBtn.classList.remove("active");
-                fileUploadContainer.classList.remove("hidden");
-                manualInputContainer.classList.add("hidden");
+                show(fileUploadContainer);
+                hide(manualInputContainer);
             });
 
             toggleManualBtn.addEventListener("click", () => {
@@ -956,8 +989,8 @@
                 toggleFileBtn.classList.remove("active");
                 toggleManualBtn.classList.add("active");
                 toggleManualBtn.classList.remove("inactive");
-                fileUploadContainer.classList.add("hidden");
-                manualInputContainer.classList.remove("hidden");
+                hide(fileUploadContainer);
+                show(manualInputContainer);
             });
 
             // --- Manual Input Form Logic ---
@@ -969,8 +1002,8 @@
                 }
                 statusFinal.textContent = "";
                 originDcName.textContent = dcNameInput.value;
-                manualStep1.classList.add("hidden");
-                manualStep2.classList.remove("hidden");
+                hide(manualStep1);
+                show(manualStep2);
                 // Don't auto-add a duration row, make it optional
                 // if (durationsListContainer.children.length === 0) {
                 //     addDurationRow();
@@ -978,8 +1011,8 @@
             });
 
             manualBackBtn.addEventListener("click", () => {
-                manualStep1.classList.remove("hidden");
-                manualStep2.classList.add("hidden");
+                show(manualStep1);
+                hide(manualStep2);
             });
 
             function addDurationRow() {
@@ -1130,7 +1163,7 @@
                     statusFinal.style.color = "#EF4444";
                     dcFileUploadButton.textContent = "Failed";
                 } finally {
-                    uploadAnotherButton.classList.remove("hidden");
+                    show(uploadAnotherButton);
                 }
             });
 
@@ -1169,7 +1202,97 @@
                     statusFinal.style.color = "#EF4444";
                     durationsFileUploadButton.textContent = "Failed";
                 } finally {
-                    uploadAnotherButton.classList.remove("hidden");
+                    show(uploadAnotherButton);
+                }
+            });
+
+            // CSV Client-side Validation & Preview
+            dcFileInput.addEventListener("change", async (e) => {
+                const file = e.target.files[0];
+                const previewEl = document.getElementById("dc-file-preview");
+                if (!previewEl) return;
+                if (!file) {
+                    hide(previewEl);
+                    return;
+                }
+                try {
+                    const content = await readFileContent(file);
+                    const parsed = parseDcCsv(content);
+                    const lines = content.replace(/\r/g, "").split("\n").filter((l) => l.trim() !== "");
+                    const totalRows = lines.length - 1;
+                    const invalidRows = totalRows - parsed.length;
+
+                    show(previewEl);
+                    previewEl.innerHTML = `
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-100">
+                            <span class="font-bold text-gray-800">Preview: ${file.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded ${invalidRows === 0 ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"} font-semibold">
+                                ${parsed.length} valid / ${totalRows} rows
+                            </span>
+                        </div>
+                        ${invalidRows > 0 ? `<p class="text-amber-800 font-semibold mb-2">⚠️ ${invalidRows} malformed row(s) skipped. Valid rows can still be uploaded.</p>` : ""}
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-[11px] text-left">
+                                <thead>
+                                    <tr class="text-gray-500 border-b">
+                                        <th class="py-1">Name</th>
+                                        <th class="py-1">Loc</th>
+                                        <th class="py-1">Lat, Lon</th>
+                                        <th class="py-1">Food Dem/Cap</th>
+                                        <th class="py-1">Non-Food Dem/Cap</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    ${parsed.slice(0, 3).map((dc) => `
+                                        <tr>
+                                            <td class="py-1 font-semibold text-gray-800">${dc.name}</td>
+                                            <td class="py-1">${dc.loc}</td>
+                                            <td class="py-1">${dc.lat.toFixed(4)}, ${dc.lon.toFixed(4)}</td>
+                                            <td class="py-1">${dc.fpallet}/${dc.fpalletcap}</td>
+                                            <td class="py-1">${dc.nfpallet}/${dc.nfpalletcap}</td>
+                                        </tr>
+                                    `).join("")}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${parsed.length > 3 ? `<p class="text-[10px] text-gray-400 mt-1 italic">+ ${parsed.length - 3} more entries ready to commit</p>` : ""}
+                    `;
+                } catch (err) {
+                    show(previewEl);
+                    previewEl.innerHTML = `<p class="text-red-700 font-bold">⚠️ Error previewing file: ${err.message}</p>`;
+                }
+            });
+
+            durationsFileInput.addEventListener("change", async (e) => {
+                const file = e.target.files[0];
+                const previewEl = document.getElementById("durations-file-preview");
+                if (!previewEl) return;
+                if (!file) {
+                    hide(previewEl);
+                    return;
+                }
+                try {
+                    const content = await readFileContent(file);
+                    const parsed = parseDurationsCsv(content);
+                    const originCount = Object.keys(parsed).length;
+                    let routeCount = 0;
+                    Object.values(parsed).forEach((destMap) => {
+                        routeCount += Object.keys(destMap).length;
+                    });
+
+                    show(previewEl);
+                    previewEl.innerHTML = `
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-100">
+                            <span class="font-bold text-gray-800">Preview: ${file.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">
+                                ${originCount} Origins · ${routeCount} Total Routes
+                            </span>
+                        </div>
+                        <p class="text-gray-600 text-[11px] mb-1">Origins detected: <strong>${Object.keys(parsed).slice(0, 5).join(", ")}${originCount > 5 ? "..." : ""}</strong></p>
+                    `;
+                } catch (err) {
+                    show(previewEl);
+                    previewEl.innerHTML = `<p class="text-red-700 font-bold">⚠️ Error previewing file: ${err.message}</p>`;
                 }
             });
 
@@ -1261,7 +1384,7 @@
                     statusFinal.textContent = "Manual Upload Failed. See console.";
                     manualUploadButton.textContent = "Failed";
                 } finally {
-                    uploadAnotherButton.classList.remove("hidden");
+                    show(uploadAnotherButton);
                 }
             });
             // END: REFACTORED UPLOAD LOGIC
@@ -1269,7 +1392,7 @@
             // "Upload Another" Button
             uploadAnotherButton.addEventListener("click", resetUploader);
 
-            // --- Editor & Modal Logic (Unchanged) ---
+            // --- Editor & Modal Logic ---
             function listenForDcUpdates() {
                 const dcsCollectionRef = collection(db, "dcs");
                 onSnapshot(
@@ -1277,9 +1400,11 @@
                     (snapshot) => {
                         allDcs = [];
                         snapshot.forEach((doc) => {
-                            allDcs.push(doc.data());
+                            const data = doc.data();
+                            const name = data.name || doc.id || "";
+                            allDcs.push({ ...data, name });
                         });
-                        allDcs.sort((a, b) => a.name.localeCompare(b.name));
+                        allDcs.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
                         renderDcList();
                     },
                     (error) => {
@@ -1313,8 +1438,7 @@
                         <h4 class="font-semibold text-lg text-blue-700">${dc.name}</h4>
                         <p class="text-sm text-gray-600">Loc: ${dc.loc}</p>
                         <p class="text-xs text-gray-500">Lat: ${dc.lat}, Lon: ${dc.lon}</p>
-                        <p class="text-xs text-gray-500">Food: ${dc.fpallet || 0}/${dc.fpalletcap || 0} | Non-Food: ${dc.nfpallet || 0
-                        }/${dc.nfpalletcap || 0}</p>
+                        <p class="text-xs text-gray-500">Food Demand: ${dc.fpallet || 0} plts (Cap: ${dc.fpalletcap || 0}) | Non-Food Demand: ${dc.nfpallet || 0} plts (Cap: ${dc.nfpalletcap || 0})</p>
                     </div>
                     <div class="flex space-x-2">
                         <button data-dcname="${dc.name}" class="manage-avoided-btn bg-orange-100 text-orange-700 font-medium py-2 px-3 rounded-lg text-sm hover:bg-orange-200">Avoids</button>
@@ -1341,7 +1465,7 @@
 
             async function loadAndRenderDurations(dcName) {
                 durationsList.innerHTML = "";
-                durationListLoading.classList.remove("hidden");
+                show(durationListLoading);
                 const docRef = doc(db, "durations", dcName);
                 try {
                     const docSnap = await getDoc(docRef);
@@ -1385,14 +1509,14 @@
                     console.error("Error fetching durations:", error);
                     durationsList.innerHTML = `<p class="text-red-500">Error loading durations. Check console.</p>`;
                 } finally {
-                    durationListLoading.classList.add("hidden");
+                    hide(durationListLoading);
                 }
             }
 
             // --- AVOIDED LOGIC ---
             async function loadAndRenderAvoided(dcName) {
                 avoidedList.innerHTML = "";
-                avoidedListLoading.classList.remove("hidden");
+                show(avoidedListLoading);
                 const docRef = doc(db, "avoided_destinations", dcName);
 
                 try {
@@ -1406,7 +1530,7 @@
                     if (currentAvoided.length === 0) {
                         avoidedList.innerHTML = `<p class="text-gray-500">No avoided destinations for ${dcName}.</p>`;
                     } else {
-                        currentAvoided.forEach(item => {
+                        currentAvoided.forEach((item) => {
                             const div = document.createElement("div");
                             div.className = "flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-100";
                             div.innerHTML = `
@@ -1419,7 +1543,7 @@
                             avoidedList.appendChild(div);
                         });
 
-                        avoidedList.querySelectorAll(".delete-avoided-btn").forEach(btn => {
+                        avoidedList.querySelectorAll(".delete-avoided-btn").forEach((btn) => {
                             btn.addEventListener("click", () => openDeleteModal("avoided", dcName, btn.dataset.target));
                         });
                     }
@@ -1427,60 +1551,52 @@
                     console.error("Error fetching avoided list:", error);
                     avoidedList.innerHTML = `<p class="text-red-500">Error loading data. Check console.</p>`;
                 } finally {
-                    avoidedListLoading.classList.add("hidden");
+                    hide(avoidedListLoading);
                 }
             }
 
             function showDcListView() {
-                dcListView.classList.remove("hidden");
-                durationListView.classList.add("hidden");
-                avoidedListView.classList.add("hidden"); // NEW
+                show(dcListView);
+                hide(durationListView);
+                hide(avoidedListView);
                 currentEditingDcName = null;
                 currentDurations = {};
             }
-            // NEW
+
             function showAvoidedView(dcName) {
-                dcListView.classList.add("hidden");
-                durationListView.classList.add("hidden");
-                avoidedListView.classList.remove("hidden");
+                hide(dcListView);
+                hide(durationListView);
+                show(avoidedListView);
                 avoidedViewTitle.textContent = `Manage Avoided Destinations for ${dcName}`;
                 currentEditingDcName = dcName;
-                // Fetch durations too, so we can filter the add list
-                const durRef = doc(db, "durations", dcName);
-                getDoc(durRef).then(snap => {
-                    if (snap.exists()) {
-                        currentDurations = snap.data().durations || {};
-                    } else {
-                        currentDurations = {};
-                    }
-                });
                 loadAndRenderAvoided(dcName);
             }
 
             backToDcsFromAvoidedBtn.addEventListener("click", showDcListView);
+
             addNewAvoidedBtn.addEventListener("click", () => {
-                modalAvoidedError.classList.add("hidden");
+                hide(modalAvoidedError);
                 modalAvoidedTarget.innerHTML = '<option value="">-- Select DC to Avoid --</option>';
-                // Populate select with other DCs not already avoided
-                const existingTargets = currentAvoided.map(x => x.target);
+                const existingTargets = currentAvoided.map((x) => x.target);
 
-                // Filter: Must be in currentDurations AND not already avoided
-                const availableDestinations = Object.keys(currentDurations);
+                const eligibleDcs = allDcs.filter(
+                    (dc) => dc.name !== currentEditingDcName && !existingTargets.includes(dc.name)
+                );
 
-                allDcs.forEach(dc => {
-                    if (dc.name !== currentEditingDcName
-                        && !existingTargets.includes(dc.name)
-                        && availableDestinations.includes(dc.name)) { // NEW CONDITION
+                if (eligibleDcs.length === 0) {
+                    modalAvoidedTarget.innerHTML = '<option value="" disabled>No other DCs available to avoid</option>';
+                } else {
+                    eligibleDcs.forEach((dc) => {
                         modalAvoidedTarget.innerHTML += `<option value="${dc.name}">${dc.name}</option>`;
-                    }
-                });
+                    });
+                }
 
                 modalAvoidedReason.value = "";
-                addAvoidedModal.classList.remove("hidden");
+                show(addAvoidedModal);
             });
 
             modalAvoidedCancel.addEventListener("click", () => {
-                addAvoidedModal.classList.add("hidden");
+                hide(addAvoidedModal);
             });
 
             modalAvoidedSave.addEventListener("click", async () => {
@@ -1489,12 +1605,12 @@
 
                 if (!targetName) {
                     modalAvoidedError.textContent = "Please select a target DC.";
-                    modalAvoidedError.classList.remove("hidden");
+                    show(modalAvoidedError);
                     return;
                 }
                 if (!reason) {
                     modalAvoidedError.textContent = "Please enter a reason.";
-                    modalAvoidedError.classList.remove("hidden");
+                    show(modalAvoidedError);
                     return;
                 }
 
@@ -1506,15 +1622,7 @@
 
                     // 1. Add target to current DC's list
                     const currentRef = doc(db, "avoided_destinations", currentEditingDcName);
-                    // We need to read it freshly to be safe, or just use arrayUnion which is safer for concurrency
-                    // BUT arrayUnion treats objects as unique only if all fields match. 
-                    // Let's read-modify-write for safety and consistent structure handling or utilize getDoc we did earlier?
-                    // Actually, arrayUnion is fine if we construct the object correctly.
-
-                    // However, we want to SUPPORT EDITING? No requirements for editing reason yet, just add/delete.
-                    // Let's use arrayUnion.
                     const newItemForCurrent = { target: targetName, reason: reason };
-                    // We can use set with merge for the doc creation if it doesn't exist
                     batch.set(currentRef, {
                         avoid_list: arrayUnion(newItemForCurrent)
                     }, { merge: true });
@@ -1528,43 +1636,48 @@
 
                     await batch.commit();
 
-                    addAvoidedModal.classList.add("hidden");
+                    hide(addAvoidedModal);
                     loadAndRenderAvoided(currentEditingDcName);
 
                 } catch (error) {
                     console.error("Error saving avoided:", error);
-                    modalAvoidedError.textContent = "Failed to save. Check console.";
-                    modalAvoidedError.classList.remove("hidden");
+                    modalAvoidedError.textContent = "Failed to save: " + (error.message || error);
+                    show(modalAvoidedError);
                 } finally {
                     modalAvoidedSave.textContent = "Save";
                     modalAvoidedSave.disabled = false;
                 }
             });
+
             function showDurationsView(dcName) {
-                dcListView.classList.add("hidden");
-                durationListView.classList.remove("hidden");
+                hide(dcListView);
+                show(durationListView);
+                hide(avoidedListView);
                 durationViewTitle.textContent = `Manage Durations for ${dcName}`;
                 currentEditingDcName = dcName;
                 loadAndRenderDurations(dcName);
             }
+
             backToDcsBtn.addEventListener("click", showDcListView);
             dcSearchInput.addEventListener("input", renderDcList);
 
             function openDcEditModal(dcName) {
                 const dc = allDcs.find((d) => d.name === dcName);
                 if (!dc) return;
+                hide(modalDcError);
                 modalDcName.value = dc.name;
-                modalDcLoc.value = dc.loc;
-                modalDcLat.value = dc.lat;
-                modalDcLon.value = dc.lon;
+                modalDcLoc.value = dc.loc || "";
+                modalDcLat.value = dc.lat ?? "";
+                modalDcLon.value = dc.lon ?? "";
                 modalDcFpallet.value = dc.fpallet || 0;
                 modalDcFpalletcap.value = dc.fpalletcap || 0;
                 modalDcNfpallet.value = dc.nfpallet || 0;
                 modalDcNfpalletcap.value = dc.nfpalletcap || 0;
-                editDcModal.classList.remove("hidden");
+                show(editDcModal);
             }
+
             modalDcCancel.addEventListener("click", () => {
-                editDcModal.classList.add("hidden");
+                hide(editDcModal);
             });
 
             modalDcSave.addEventListener("click", async () => {
@@ -1580,16 +1693,16 @@
                         nfpallet: Number(modalDcNfpallet.value) || 0,
                         nfpalletcap: Number(modalDcNfpalletcap.value) || 0
                     });
-                    editDcModal.classList.add("hidden");
+                    hide(editDcModal);
                 } catch (error) {
                     console.error("Error updating DC:", error);
-                    statusFinal.textContent = "Failed to update DC. Check console.";
-                    statusFinal.style.color = "#EF4444";
+                    modalDcError.textContent = "Failed to update DC: " + (error.message || error);
+                    show(modalDcError);
                 }
             });
 
             function openDurationModal(mode, destName = null) {
-                modalDurationError.classList.add("hidden");
+                hide(modalDurationError);
 
                 modalDurationDest.innerHTML = '<option value="">-- Select a Destination --</option>';
                 allDcs.forEach((dc) => {
@@ -1602,37 +1715,37 @@
                     if (!data) return;
                     modalDurationTitle.textContent = `Edit Duration to ${destName}`;
                     modalDurationDest.value = destName;
-                    modalDurationDest.readOnly = true;
-                    modalDurationDest.classList.add("form-input[readonly]");
-                    modalDurationKm.value = String(data.km).replace(" KM", "");
+                    modalDurationDest.disabled = true;
+                    modalDurationKm.value = String(data.km).replace(/\s*km$/i, "");
                     modalDurationText.value = data.duration;
                     modalDurationSave.dataset.mode = "edit";
                     modalDurationSave.dataset.origName = destName;
                 } else {
                     modalDurationTitle.textContent = `Add New Duration from ${currentEditingDcName}`;
                     modalDurationDest.value = "";
-                    modalDurationDest.readOnly = false;
-                    modalDurationDest.classList.remove("form-input[readonly]");
+                    modalDurationDest.disabled = false;
                     modalDurationKm.value = "";
                     modalDurationText.value = "";
                     modalDurationSave.dataset.mode = "add";
                     modalDurationSave.dataset.origName = "";
                 }
-                editDurationModal.classList.remove("hidden");
+                show(editDurationModal);
             }
+
             modalDurationCancel.addEventListener("click", () => {
-                editDurationModal.classList.add("hidden");
+                hide(editDurationModal);
             });
+
             addNewDurationBtn.addEventListener("click", () => openDurationModal("add"));
 
             modalDurationSave.addEventListener("click", async () => {
                 const mode = modalDurationSave.dataset.mode;
                 const newDestName = modalDurationDest.value;
                 const origName = modalDurationSave.dataset.origName;
-                const kmRaw = modalDurationKm.value;
+                const kmRaw = modalDurationKm.value.trim();
 
                 let errorMsg = "";
-                if (!newDestName || !kmRaw || !modalDurationText.value) {
+                if (!newDestName || !kmRaw || !modalDurationText.value.trim()) {
                     errorMsg = "Please fill in all fields.";
                 } else if (parseDurationToSeconds(modalDurationText.value) === null) {
                     errorMsg = `Invalid duration format: "${modalDurationText.value}". Use "2h 15m" or "90m".`;
@@ -1642,7 +1755,7 @@
 
                 if (errorMsg) {
                     modalDurationError.textContent = errorMsg;
-                    modalDurationError.classList.remove("hidden");
+                    show(modalDurationError);
                     return;
                 }
 
@@ -1654,34 +1767,36 @@
 
                 currentDurations[newDestName] = {
                     km: kmValue,
-                    duration: modalDurationText.value
+                    duration: modalDurationText.value.trim()
                 };
 
                 const docRef = doc(db, "durations", currentEditingDcName);
                 try {
-                    await setDoc(docRef, { durations: currentDurations });
-                    editDurationModal.classList.add("hidden");
+                    await setDoc(docRef, { durations: currentDurations }, { merge: true });
+                    hide(editDurationModal);
                     loadAndRenderDurations(currentEditingDcName);
                 } catch (error) {
                     console.error("Error saving duration:", error);
-                    modalDurationError.textContent = "Failed to save. Check console.";
-                    modalDurationError.classList.remove("hidden");
+                    modalDurationError.textContent = "Failed to save: " + (error.message || error);
+                    show(modalDurationError);
                 }
             });
 
             function openDeleteModal(type, name1, name2 = null) {
                 currentDeleteContext = { type, name1, name2 };
+                hide(modalDeleteError);
                 if (type === "dc") {
-                    deleteConfirmText.textContent = `Do you really want to delete "${name1}"? This will also delete its entire duration list. This action cannot be undone.`;
+                    deleteConfirmText.textContent = `Do you really want to delete "${name1}"? This will also delete its entire duration list and avoidance rules. This action cannot be undone.`;
                 } else if (type === "avoided") {
                     deleteConfirmText.textContent = `Do you really want to remove the avoidance rule between "${name1}" and "${name2}"? This will remove it from both DCs.`;
                 } else {
                     deleteConfirmText.textContent = `Do you really want to delete the duration from "${name1}" to "${name2}"? This action cannot be undone.`;
                 }
-                deleteConfirmModal.classList.remove("hidden");
+                show(deleteConfirmModal);
             }
+
             modalDeleteCancel.addEventListener("click", () => {
-                deleteConfirmModal.classList.add("hidden");
+                hide(deleteConfirmModal);
                 currentDeleteContext = {};
             });
 
@@ -1691,17 +1806,13 @@
                     if (type === "dc") {
                         await deleteDoc(doc(db, "dcs", name1));
                         await deleteDoc(doc(db, "durations", name1));
+                        await deleteDoc(doc(db, "avoided_destinations", name1));
                     } else if (type === "duration") {
                         delete currentDurations[name2];
                         const docRef = doc(db, "durations", name1);
-                        await setDoc(docRef, { durations: currentDurations });
+                        await setDoc(docRef, { durations: currentDurations }, { merge: true });
                         loadAndRenderDurations(name1);
                     } else if (type === "avoided") {
-                        // Bidirectional Delete
-                        // We need to find the full objects to remove them using arrayRemove, BUT arrayRemove requires exact object match.
-                        // So we first need to read both docs to find the objects with the matching reasons...
-                        // OR we can just read-modify-write the arrays.
-
                         try {
                             const batch = writeBatch(db);
 
@@ -1710,8 +1821,8 @@
                             const snap1 = await getDoc(ref1);
                             if (snap1.exists()) {
                                 const list1 = snap1.data().avoid_list || [];
-                                const newList1 = list1.filter(item => item.target !== name2);
-                                batch.update(ref1, { avoid_list: newList1 });
+                                const newList1 = list1.filter((item) => item.target !== name2);
+                                batch.set(ref1, { avoid_list: newList1 }, { merge: true });
                             }
 
                             // 2. Remove from name2 (the target)
@@ -1719,8 +1830,8 @@
                             const snap2 = await getDoc(ref2);
                             if (snap2.exists()) {
                                 const list2 = snap2.data().avoid_list || [];
-                                const newList2 = list2.filter(item => item.target !== name1);
-                                batch.update(ref2, { avoid_list: newList2 });
+                                const newList2 = list2.filter((item) => item.target !== name1);
+                                batch.set(ref2, { avoid_list: newList2 }, { merge: true });
                             }
 
                             await batch.commit();
@@ -1730,15 +1841,13 @@
                             console.error("Bidirectional delete failed", e);
                             throw e;
                         }
-
                     }
+                    hide(deleteConfirmModal);
+                    currentDeleteContext = {};
                 } catch (error) {
                     console.error("Error deleting item:", error);
-                    statusFinal.textContent = "Failed to delete. Check console.";
-                    statusFinal.style.color = "#EF4444";
-                } finally {
-                    deleteConfirmModal.classList.add("hidden");
-                    currentDeleteContext = {};
+                    modalDeleteError.textContent = "Failed to delete: " + (error.message || error);
+                    show(modalDeleteError);
                 }
             });
         </script>

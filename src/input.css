@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f7f7f9;
+}
+
+.map-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow:
+        0 4px 6px -1px rgb(0 0 0 / 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.factory-card {
+    display: flex;
+    align-items: center;
+    border-left: 4px solid #10b981;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.factory-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.suggestion-active {
+    background-color: #d1fae5;
+}
+
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #059669;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Management Portal Custom Component Styles */
+.status-dot { height: 10px; width: 10px; background-color: #9CA3AF; border-radius: 50%; display: inline-block; }
+.status-dot.pending { background-color: #F59E0B; }
+.status-dot.success { background-color: #10B981; }
+.status-dot.error { background-color: #EF4444; }
+
+.form-input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #D1D5DB;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s;
+}
+.form-input:focus {
+    border-color: #059669;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.3);
+}
+.form-input[readonly] {
+    background-color: #F3F4F6;
+    color: #6B7280;
+    cursor: not-allowed;
+}
+
+.file-input-custom {
+    display: block;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #D1D5DB;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    line-height: 1.5;
+}
+.file-input-custom::file-selector-button {
+    margin-right: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem 0 0 0.5rem;
+    border: 0;
+    background-color: #F3F4F6;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.file-input-custom::file-selector-button:hover {
+    background-color: #E5E7EB;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s, color 0.2s;
+    border: 1px solid #D1D5DB;
+}
+.toggle-btn.active {
+    background-color: #1F2937;
+    color: #FFFFFF;
+    border-color: #1F2937;
+}
+.toggle-btn.inactive {
+    background-color: #FFFFFF;
+    color: #4B5563;
+}
+.toggle-btn.inactive:hover {
+    background-color: #F9FAFB;
+}
+
+.main-tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #6B7280;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.main-tab-btn:hover {
+    color: #1F2937;
+}
+.main-tab-btn.active {
+    color: #059669;
+    border-bottom-color: #059669;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-backdrop.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+}
+
+.dc-list-item, .duration-list-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.5rem;
+}

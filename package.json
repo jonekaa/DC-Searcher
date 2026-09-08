@@ -1,0 +1,19 @@
+{
+  "name": "dc-searcher",
+  "version": "1.0.0",
+  "description": "Find Distribution Centers - Fast, Visual, and Intelligent",
+  "scripts": {
+    "build:css": "tailwindcss -i src/input.css -o css/style.css --minify",
+    "dev": "py -m http.server 8000",
+    "build": "npm run build:css"
+  },
+  "keywords": [
+    "logistics",
+    "distribution-center",
+    "indonesia",
+    "leaflet",
+    "firebase"
+  ],
+  "author": "Jonathan Eka",
+  "license": "MIT"
+}

@@ -75,10 +75,11 @@ const updateMapMarkers = (factories, searchLocation, comparisonList, avoidedList
         // Add routes only for checked items
         if (isChecked) {
             let routeColor = getComparisonColor(factory.id) || "#3388ff";
+            let lineStyles = [{ color: routeColor, opacity: 1, weight: 5 }];
 
-            // Override color if avoided
+            // Override color and style if avoided route
             if (avoidedItem) {
-                routeColor = "#FF4500"; // OrangeRed
+                lineStyles = [{ color: "#dc2626", opacity: 0.95, weight: 6, dashArray: "10, 8" }];
             }
 
             const control = L.Routing.control({
@@ -87,7 +88,7 @@ const updateMapMarkers = (factories, searchLocation, comparisonList, avoidedList
                 addWaypoints: false,
                 draggableWaypoints: false,
                 show: false,
-                lineOptions: { styles: [{ color: routeColor, opacity: 1, weight: 5 }] }
+                lineOptions: { styles: lineStyles }
             }).addTo(map);
             activeRoutingControls.push(control);
         }
@@ -113,13 +114,52 @@ const updateMapMarkers = (factories, searchLocation, comparisonList, avoidedList
             `;
         }
 
+        const foodDemand = Number(factory.fpallet) || 0;
+        const foodCap = Number(factory.fpalletcap) || 0;
+        const foodCapText = foodCap > 0 ? `${foodCap.toLocaleString()} pallets` : "N/A";
+
+        const nfDemand = Number(factory.nfpallet) || 0;
+        const nfCap = Number(factory.nfpalletcap) || 0;
+        const nfCapText = nfCap > 0 ? `${nfCap.toLocaleString()} pallets` : "N/A";
+
         const popupContent = `
             ${popupWarning}
             <b>${factory.name}</b><br>
-            ${factory.roadKm} (${factory.duration})
-            <hr style="margin: 4px 0;">
-            <small>Food: ${factory.fpallet || 0} / ${factory.fpalletcap || 0}</small><br>
-            <small>Non-Food: ${factory.nfpallet || 0} / ${factory.nfpalletcap || 0}</small>
+            <span style="color: #047857; font-weight: bold;">${factory.roadKm}</span> (${factory.duration})
+            <hr style="margin: 6px 0; border-color: #e5e7eb;">
+            <div style="font-size: 11px; line-height: 1.45; min-width: 175px;">
+                <!-- Food Pallet List -->
+                <div style="margin-bottom: 6px; padding: 6px 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 600; color: #111827; margin-bottom: 4px; font-size: 11px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px;">
+                        <span>Food Pallet</span>
+                        <span style="font-size: 9px; font-weight: 500; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Daily Specs</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: #4b5563;">
+                        <span>Daily Demand:</span>
+                        <b style="color: #111827;">${foodDemand.toLocaleString()} pallets</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #4b5563;">
+                        <span>Capacity:</span>
+                        <span style="font-weight: 600; color: #111827;">${foodCapText}</span>
+                    </div>
+                </div>
+
+                <!-- Non-Food Pallet List -->
+                <div style="padding: 6px 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 600; color: #111827; margin-bottom: 4px; font-size: 11px; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px;">
+                        <span>Non-Food Pallet</span>
+                        <span style="font-size: 9px; font-weight: 500; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Daily Specs</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: #4b5563;">
+                        <span>Daily Demand:</span>
+                        <b style="color: #111827;">${nfDemand.toLocaleString()} pallets</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #4b5563;">
+                        <span>Capacity:</span>
+                        <span style="font-weight: 600; color: #111827;">${nfCapText}</span>
+                    </div>
+                </div>
+            </div>
         `;
         marker.bindPopup(popupContent);
         // END: UPDATED POPUP CONTENT
@@ -158,6 +198,7 @@ const renderFactoryList = (factoriesToRender, comparisonList, avoidedList = []) 
     factoryList.innerHTML = "";
     if (factoriesToRender.length === 0) {
         factoryList.innerHTML = `<p class="text-gray-500 italic p-4 text-center">No results match your filter.</p>`;
+        updateComparisonDrawer(factoriesToRender, comparisonList, avoidedList);
         return;
     }
 
@@ -167,6 +208,8 @@ const renderFactoryList = (factoriesToRender, comparisonList, avoidedList = []) 
         const routeColor = getComparisonColor(factory.id);
         factoryList.appendChild(createFactoryCard(factory, comparisonList, routeColor, isComparing, avoidedList));
     });
+
+    updateComparisonDrawer(factoriesToRender, comparisonList, avoidedList);
 };
 
 const createFactoryCard = (factory, comparisonList, routeColor, isComparing, avoidedList = []) => {
@@ -174,67 +217,129 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing, avo
 
     const distanceHtml =
         factory.roadKm && factory.duration
-            ? `<p class="text-lg font-bold text-emerald-600">${factory.roadKm}</p><p class="text-xs text-gray-500">Duration: ${factory.duration}</p>`
-            : `<p class="text-lg font-bold text-gray-400">N/A</p>`;
+            ? `<p class="text-base font-bold text-emerald-800">${factory.roadKm}</p><p class="text-xs text-gray-500 font-medium">${factory.duration}</p>`
+            : `<p class="text-sm font-semibold text-gray-600">Distance N/A</p>`;
 
     const isCheckedBool = comparisonList.includes(factory.id);
     const isChecked = isCheckedBool ? "checked" : "";
 
-    card.className = "factory-card bg-white p-4 rounded-lg shadow-sm flex items-center gap-x-3";
+    card.className = "factory-card bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-emerald-300 transition w-full";
     card.dataset.id = factory.id;
+    if (isCheckedBool && routeColor) {
+        card.style.borderLeft = `4px solid ${routeColor}`;
+    } else {
+        card.style.borderLeft = "4px solid transparent";
+    }
 
-    const clickableAreaClasses = ["flex-grow", "flex", "justify-between", "items-start", "cursor-pointer"];
     const checkboxStyle = routeColor ? `style="accent-color: ${routeColor};"` : "";
 
-    const avoidedItem = avoidedList.find(item => item.target === factory.name);
+    const avoidedItem = avoidedList.find((item) => item.target === factory.name);
     let warningHtml = "";
     if (avoidedItem) {
         warningHtml = `
-            <div class="mt-2 p-2 bg-red-100 border border-red-200 text-red-800 rounded-lg text-xs font-semibold">
-                <span class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    Avoided Route
-                </span>
-                <p class="mt-1 font-normal text-red-700">Reason: ${avoidedItem.reason}</p>
+            <div class="mt-2.5 p-2 bg-red-50 border border-red-200 text-red-800 rounded-md text-xs font-semibold flex items-start gap-1.5 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                    <span class="font-bold">Avoided Route</span>
+                    <span class="font-normal text-red-700 ml-1">— Reason: ${avoidedItem.reason}</span>
+                </div>
             </div>
         `;
     }
 
-    // START: UPDATED CARD HTML
+    const foodDemand = Number(factory.fpallet) || 0;
+    const foodCap = Number(factory.fpalletcap) || 0;
+    const foodCapFormatted = foodCap > 0
+        ? `${foodCap.toLocaleString()} <span class="text-[10px] font-normal text-gray-500">pallets</span>`
+        : `<span class="text-gray-400 font-normal">N/A</span>`;
+
+    const nfDemand = Number(factory.nfpallet) || 0;
+    const nfCap = Number(factory.nfpalletcap) || 0;
+    const nfCapFormatted = nfCap > 0
+        ? `${nfCap.toLocaleString()} <span class="text-[10px] font-normal text-gray-500">pallets</span>`
+        : `<span class="text-gray-400 font-normal">N/A</span>`;
+
     card.innerHTML = `
-        <input type="checkbox" data-id="${factory.id}" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mr-2 flex-shrink-0" ${isChecked} ${checkboxStyle}>
-        <div class="${clickableAreaClasses.join(" ")}">
-            <div>
-                <p class="text-base font-semibold text-gray-900 pointer-events-none">${factory.name}</p>
-                <p class="text-sm text-gray-500 pointer-events-none">${factory.loc}</p>
-                <div class="text-xs text-gray-500 mt-1 pointer-events-none">
-                    Food: <span class="font-medium">${factory.fpallet || 0}</span> / ${factory.fpalletcap || 0}  
-                    <br>Non-Food: <span class="font-medium">${factory.nfpallet || 0}</span> / ${factory.nfpalletcap || 0}
+        <div class="flex items-start gap-3 w-full">
+            <input type="checkbox" data-id="${factory.id}" aria-label="Select ${factory.name} for route comparison" class="h-5 w-5 mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0" ${isChecked} ${checkboxStyle}>
+            
+            <div class="flex-grow min-w-0 cursor-pointer factory-card-body">
+                <!-- Top Row: DC Name + Loc ID (left) and Distance + Action (right) -->
+                <div class="flex justify-between items-start gap-2.5">
+                    <div class="min-w-0 flex-grow pr-1">
+                        <p class="text-base font-semibold text-gray-900 leading-tight truncate pointer-events-none">${factory.name}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 pointer-events-none">${factory.loc || "Loc ID: N/A"}</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <div class="text-right pointer-events-none">
+                            ${distanceHtml}
+                        </div>
+                        <!-- Search from here button -->
+                        <button class="search-from-here-btn p-1.5 text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition" aria-label="Search routes originating from ${factory.name}" title="Search from ${factory.name}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Pallets: Daily Demand and Capacity Lists -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-gray-100 w-full pointer-events-none">
+                    <!-- Food Pallet List Box -->
+                    <div class="bg-gray-50/80 p-2.5 rounded-lg border border-gray-200">
+                        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-gray-200">
+                            <span class="text-xs font-semibold text-gray-800 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block"></span>
+                                Food Pallet
+                            </span>
+                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Demand / Cap</span>
+                        </div>
+                        <ul class="space-y-1 text-xs">
+                            <li class="flex justify-between items-baseline">
+                                <span class="text-gray-500 font-normal">Daily Demand</span>
+                                <span class="font-semibold text-gray-900 tabular-nums">${foodDemand.toLocaleString()} <span class="text-[10px] font-normal text-gray-500">pallets</span></span>
+                            </li>
+                            <li class="flex justify-between items-baseline">
+                                <span class="text-gray-500 font-normal">Capacity</span>
+                                <span class="font-semibold text-gray-900 tabular-nums">${foodCapFormatted}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Non-Food Pallet List Box -->
+                    <div class="bg-gray-50/80 p-2.5 rounded-lg border border-gray-200">
+                        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-gray-200">
+                            <span class="text-xs font-semibold text-gray-800 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block"></span>
+                                Non-Food Pallet
+                            </span>
+                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Demand / Cap</span>
+                        </div>
+                        <ul class="space-y-1 text-xs">
+                            <li class="flex justify-between items-baseline">
+                                <span class="text-gray-500 font-normal">Daily Demand</span>
+                                <span class="font-semibold text-gray-900 tabular-nums">${nfDemand.toLocaleString()} <span class="text-[10px] font-normal text-gray-500">pallets</span></span>
+                            </li>
+                            <li class="flex justify-between items-baseline">
+                                <span class="text-gray-500 font-normal">Capacity</span>
+                                <span class="font-semibold text-gray-900 tabular-nums">${nfCapFormatted}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 ${warningHtml}
             </div>
-            <div class="text-right flex-shrink-0 ml-4 pointer-events-none">
-                ${distanceHtml}
-            </div>
         </div>
-	 <button class="search-from-here-btn p-2 text-gray-400 hover:text-blue-600" title="Search from ${factory.name}">
-        	<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            		<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-        	</svg>
-    	 </button>
     `;
-    // END: UPDATED CARD HTML
 
-    const clickableArea = card;
     card.addEventListener("mouseover", () => {
-        const clickableArea = card.querySelector("div.flex-grow");
-
         if (factoryMarkers[factory.id]) {
             factoryMarkers[factory.id].openPopup();
         }
-        card.classList.add("bg-red-50");
+        card.classList.add("bg-emerald-50/40");
     });
 
     card.addEventListener("mouseout", () => {
@@ -242,7 +347,7 @@ const createFactoryCard = (factory, comparisonList, routeColor, isComparing, avo
         if (!isChecked && factoryMarkers[factory.id]) {
             factoryMarkers[factory.id].closePopup();
         }
-        card.classList.remove("bg-red-50");
+        card.classList.remove("bg-emerald-50/40");
     });
 
     card.querySelector(".search-from-here-btn").addEventListener("click", (e) => {
@@ -268,8 +373,8 @@ const displaySuggestions = (suggestions, query) => {
         const suggestionItem = document.createElement("div");
         suggestionItem.className = "p-3 hover:bg-emerald-50 cursor-pointer suggestion-item";
         suggestionItem.dataset.name = factory.name;
-        const highlightedName = factory.name.replace(highlightRegex, '<strong class="text-red-500">$1</strong>');
-        const highlightedLoc = factory.loc.replace(highlightRegex, '<strong class="text-red-500">$1</strong>');
+        const highlightedName = factory.name.replace(highlightRegex, '<strong class="text-emerald-700 font-bold">$1</strong>');
+        const highlightedLoc = factory.loc.replace(highlightRegex, '<strong class="text-emerald-700 font-bold">$1</strong>');
         suggestionItem.innerHTML = `<p class="font-semibold text-gray-800 pointer-events-none">${highlightedName}</p><p class="text-sm text-gray-500 pointer-events-none">${highlightedLoc}</p>`;
         suggestionsContainer.appendChild(suggestionItem);
     });
@@ -293,7 +398,7 @@ const displayResults = (foundFactories, searchLocation, comparisonList, avoidedL
         lastRadarData = { factories: [], searchLocation: null };
         currentlyDisplayedOnRadar = [];
         if (markersLayer) markersLayer.clearLayers();
-        factoryList.innerHTML = `<p class="text-gray-500 p-4 border border-dashed border-gray-300 rounded-lg text-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>No routes found matching your filter criteria.</p>`;
+        factoryList.innerHTML = `<p class="text-gray-500 p-4 border border-dashed border-gray-300 rounded-lg text-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>No distribution center routes match your filter criteria.</p>`;
     }
 };
 
@@ -322,14 +427,13 @@ const scrollCardIntoView = (factoryId) => {
         block: "start"
     });
 
-    // Add a temporary highlight
-    card.style.transition = "outline 0.3s ease-out";
-    card.classList.add("bg-red-50");
+    // Add a temporary subtle highlight (emerald)
+    card.classList.add("bg-emerald-50", "ring-2", "ring-emerald-500");
 
     // Remove the highlight after a short duration
     setTimeout(() => {
-        card.style.outline = "none";
-    }, 1200);
+        card.classList.remove("bg-emerald-50", "ring-2", "ring-emerald-500");
+    }, 1500);
 };
 
 /**
@@ -443,3 +547,11 @@ const renderAllDcsAsDots = (factories) => {
         map.fitBounds(bounds, { padding: [50, 50] });
     }
 };
+
+/**
+ * Comparison drawer removed per design requirements.
+ * Maintained as a no-op for backward compatibility.
+ */
+const updateComparisonDrawer = () => {
+    // No-op: floating comparison drawer removed.
+};
